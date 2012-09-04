@@ -3,10 +3,11 @@ use strict;
 use warnings;
 use Moose;
 use Path::Class;
-use Capture::Tiny;
+use Capture::Tiny qw(capture_stdout);
 use IPC::Cmd qw(can_run);
 use MooseX::Types::Path::Class;
 use Moose::Util::TypeConstraints;
+use namespace::autoclean;
 
 with 'Dist::Zilla::Role::FileGatherer';
 
@@ -24,6 +25,13 @@ BEGIN {
         qq{Cannot find "$_": Are the Unix gettext utilities installed?};
     };
 }
+
+has textdomain => (
+    is      => 'ro',
+    isa     => 'Str',
+    lazy    => 1,
+    default => sub { shift->zilla->name },
+);
 
 has lang_dir => (
     is      => 'ro',
@@ -51,11 +59,13 @@ has bin_file_suffix => (
 
 sub gather_files {
     my ($self, $arg) = @_;
+
     require Dist::Zilla::File::InMemory;
 
     my $dir = $self->lang_dir;
     my $mo  = $self->lang_file_suffix;
-    my $po  = $self->bin_lang_stuffix;
+    my $po  = $self->bin_file_suffix;
+    my $dom = $self->textdomain;
     my @cmd = (
         $self->msgfmt,
         '--check',
@@ -64,22 +74,30 @@ sub gather_files {
         '--output-file' => '-',
     );
 
-    for my $file ( $dir->lang_dir->children ) {
-        next if $file->is_dir || $file !~ /[.]$mo\z/;
-        (my $lang = $file->basename) =~ s/[.]$mo\z//;
-        my $dest = file 'lib', 'LocaleData', $lang, 'LC_MESSAGES', "$lang.$po";
+    unless (-d $dir) {
+        require Carp;
+        Carp::croak("Cannot search $dir: no such directory");
+    }
+
+    for my $file ( $dir->children ) {
+        next if $file->is_dir || $file !~ /[.]$po\z/;
+        (my $lang = $file->basename) =~ s/[.]$po\z//;
+        my $dest = file 'lib', 'LocaleData', $lang, 'LC_MESSAGES', "$dom.$mo";
         $self->add_file(
             Dist::Zilla::File::InMemory->new({
-                name    => $dest,
+                name    => $dest->stringify,
                 content => capture_stdout {
                     system(@cmd, $file) == 0 or do {
                         require Carp;
                         Carp::confess("Cannot compile $file");
                     };
-                }
+                } || '',
             })
         );
     }
 }
 
+__PACKAGE__->meta->make_immutable;
 1;
+
+__END__
