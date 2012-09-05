@@ -1,0 +1,13 @@
+# add files you don't want in git here
+/_build
+/blib
+-*
+/MANIFEST
+/MANIFEST.bak
+/*META.*
+/Build
+/Makefile*
+/pm_to_blib
+/Dist-Zilla-*
+.build/
+

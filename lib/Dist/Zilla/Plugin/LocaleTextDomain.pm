@@ -116,7 +116,7 @@ In F<dist.ini>
 
 This plugin compiles GNU gettext language files and adds them into the
 distribution for use by L<Locale::TextDomain>. This is useful if your
-distribution maintains gettext langauge files in a directory, with each file
+distribution maintains gettext language files in a directory, with each file
 named for a language.
 
 =head2 Attributes
