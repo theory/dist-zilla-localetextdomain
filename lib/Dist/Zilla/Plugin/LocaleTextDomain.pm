@@ -5,10 +5,11 @@ use strict;
 use warnings;
 use Moose;
 use Path::Class;
-use Capture::Tiny qw(capture_stdout);
 use IPC::Cmd qw(can_run);
 use MooseX::Types::Path::Class;
 use Moose::Util::TypeConstraints;
+use Dist::Zilla::File::FromCode;
+use File::Path 2.07 qw(make_path remove_tree);
 use namespace::autoclean;
 
 with 'Dist::Zilla::Role::FileGatherer';
@@ -41,6 +42,12 @@ has share_dir => (
     isa     => 'Path::Class::Dir',
     coerce  => 1,
     default => sub { dir 'share' },
+);
+
+has _tmp_dir => (
+    is      => 'ro',
+    isa     => 'Path::Class::Dir',
+    default => sub { dir +File::Spec->tmpdir, "LocaleTextDomain.$$" },
 );
 
 has msgfmt => (
@@ -79,25 +86,30 @@ has language => (
     },
 );
 
+sub DEMOLISH {
+    my $self = shift;
+    my $dir = $self->_tmp_dir || return;
+    remove_tree $dir->stringify if -e $dir;
+}
+
 sub mvp_multivalue_args { return qw(language) }
 
 sub gather_files {
     my ($self, $arg) = @_;
-
-    require Dist::Zilla::File::InMemory;
 
     my $lang_dir = $self->lang_dir;
     my $lang_ext = $self->lang_file_suffix;
     my $bin_ext  = $self->bin_file_suffix;
     my $txt_dom  = $self->textdomain;
     my $shr_dir  = $self->share_dir;
+    my $tmp_dir  = $self->_tmp_dir;
 
     my @cmd = (
         $self->msgfmt,
         '--check',
         '--statistics',
         '--verbose',
-        '--output-file' => '-',
+        '--output-file',
     );
 
     unless (-d $lang_dir) {
@@ -105,20 +117,21 @@ sub gather_files {
         Carp::croak("Cannot search $lang_dir: no such directory");
     }
 
-    binmode STDOUT, ':raw' or die "Cannot set binmode on STDOUT: $!\n";
+    make_path $tmp_dir->stringify;
+
     for my $lang (@{ $self->language }) {
         my $file = $lang_dir->file("$lang.$lang_ext");
         my $dest = file $shr_dir, 'LocaleData', $lang, 'LC_MESSAGES',
             "$txt_dom.$bin_ext";
+        my $temp = $tmp_dir->file("$lang.$bin_ext");
+        system(@cmd, $temp, $file) == 0 or do {
+            require Carp;
+            Carp::confess("Cannot compile $file");
+        };
         $self->add_file(
-            Dist::Zilla::File::InMemory->new({
-                name    => $dest->stringify,
-                content => capture_stdout {
-                    system(@cmd, $file) == 0 or do {
-                        require Carp;
-                        Carp::confess("Cannot compile $file");
-                    };
-                } || '',
+            Dist::Zilla::File::FromCode->new({
+                name => $dest->stringify,
+                code => sub { scalar $temp->slurp(iomode => '<:raw') },
             })
         );
     }
