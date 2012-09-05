@@ -61,6 +61,26 @@ has bin_file_suffix => (
     default => 'mo',
 );
 
+has language => (
+    is      => 'ro',
+    isa     => 'ArrayRef[Str]',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+        my $lang_dir = $self->lang_dir;
+        my $lang_ext = $self->lang_file_suffix;
+        my @langs;
+        for my $file ( $lang_dir->children ) {
+            next if $file->is_dir || $file !~ /[.]$lang_ext\z/;
+            (my $lang = $file->basename) =~ s/[.]$lang_ext\z//;
+            push @langs => $lang;
+        }
+        return \@langs;
+    },
+);
+
+sub mvp_multivalue_args { return qw(language) }
+
 sub gather_files {
     my ($self, $arg) = @_;
 
@@ -86,9 +106,8 @@ sub gather_files {
     }
 
     binmode STDOUT, ':raw' or die "Cannot set binmode on STDOUT: $!\n";
-    for my $file ( $lang_dir->children ) {
-        next if $file->is_dir || $file !~ /[.]$lang_ext\z/;
-        (my $lang = $file->basename) =~ s/[.]$lang_ext\z//;
+    for my $lang (@{ $self->language }) {
+        my $file = $lang_dir->file("$lang.$lang_ext");
         my $dest = file $shr_dir, 'LocaleData', $lang, 'LC_MESSAGES',
             "$txt_dom.$bin_ext";
         $self->add_file(
@@ -152,6 +171,12 @@ should be added. Defaults to C<share>.
 
 The location of the C<msgfmt> program, which is distributed with
 L<GNU gettext|http://www.gnu.org/software/gettext/>.
+
+=head3 C<language>
+
+A language to be compiled. May be specified more than once. If not specified,
+the default will be the list of files in C<lang_dir> ending in
+C<lange_file_suffix>.
 
 =head3 C<lang_file_suffix>
 

@@ -51,10 +51,15 @@ ok $tzil = tzil({
     msgfmt           => 'msgfmt',
     lang_file_suffix => 'po',
     bin_file_suffix  => 'bo',
+    language         => ['fr']
 }), 'Create another tzil';
 
 $stderr = capture_stderr { ok $tzil->build, 'Build again' };
-for my $lang (qw(de fr)) {
+ok -e $tzil->tempdir->file("build/lib/LocaleData/fr/LC_MESSAGES/org.imperia.simplecal.bo"),
+    'Should have fr .bo file';
+ok !-e $tzil->tempdir->file("build/lib/LocaleData/de/LC_MESSAGES/org.imperia.simplecal.bo"),
+    'Should not have de .bo file';
+for my $lang (qw(fr)) {
     like $stderr, qr/^po.$lang[.]po: /m, "STDERR should have $lang.bo message";
     ok my $contents = $tzil->slurp_file(
         "build/lib/LocaleData/$lang/LC_MESSAGES/org.imperia.simplecal.bo",
