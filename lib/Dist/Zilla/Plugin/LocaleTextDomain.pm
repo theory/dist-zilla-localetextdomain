@@ -36,6 +36,13 @@ has lang_dir => (
     default => sub { dir 'po' },
 );
 
+has share_dir => (
+    is      => 'ro',
+    isa     => 'Path::Class::Dir',
+    coerce  => 1,
+    default => sub { dir 'share' },
+);
+
 has msgfmt => (
     is      => 'ro',
     isa     => 'App',
@@ -59,10 +66,12 @@ sub gather_files {
 
     require Dist::Zilla::File::InMemory;
 
-    my $dir = $self->lang_dir;
-    my $po  = $self->lang_file_suffix;
-    my $mo  = $self->bin_file_suffix;
-    my $dom = $self->textdomain;
+    my $lang_dir = $self->lang_dir;
+    my $lang_ext = $self->lang_file_suffix;
+    my $bin_ext  = $self->bin_file_suffix;
+    my $txt_dom  = $self->textdomain;
+    my $shr_dir  = $self->share_dir;
+
     my @cmd = (
         $self->msgfmt,
         '--check',
@@ -71,16 +80,17 @@ sub gather_files {
         '--output-file' => '-',
     );
 
-    unless (-d $dir) {
+    unless (-d $lang_dir) {
         require Carp;
-        Carp::croak("Cannot search $dir: no such directory");
+        Carp::croak("Cannot search $lang_dir: no such directory");
     }
 
     binmode STDOUT, ':raw' or die "Cannot set binmode on STDOUT: $!\n";
-    for my $file ( $dir->children ) {
-        next if $file->is_dir || $file !~ /[.]$po\z/;
-        (my $lang = $file->basename) =~ s/[.]$po\z//;
-        my $dest = file 'lib', 'LocaleData', $lang, 'LC_MESSAGES', "$dom.$mo";
+    for my $file ( $lang_dir->children ) {
+        next if $file->is_dir || $file !~ /[.]$lang_ext\z/;
+        (my $lang = $file->basename) =~ s/[.]$lang_ext\z//;
+        my $dest = file $shr_dir, 'LocaleData', $lang, 'LC_MESSAGES',
+            "$txt_dom.$bin_ext";
         $self->add_file(
             Dist::Zilla::File::InMemory->new({
                 name    => $dest->stringify,
@@ -108,9 +118,11 @@ Dist::Zilla::Plugin::LocaleTextDomain - Compile Local::TextDomain language files
 
 In F<dist.ini>
 
+  [ShareDir]
   [@LocaleTextDomain]
   textdomain = My-App
   lang_dir = po
+  share_dir = share
 
 =head1 Description
 
@@ -130,6 +142,11 @@ distribution.
 =head3 C<lang_dir>
 
 The directory containing your language files. Defaults to F<po>.
+
+=head3 C<share_dir>
+
+The name of the distribution directory into which compiled language files
+should be added. Defaults to C<share>.
 
 =head3 C<msgfmt>
 

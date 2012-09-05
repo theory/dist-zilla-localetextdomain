@@ -37,7 +37,7 @@ my $stderr = capture_stderr { ok $tzil->build, 'Build it' };
 for my $lang (qw(de fr)) {
     like $stderr, qr/^po.$lang[.]po: /m, "STDERR should have $lang.po message";
     ok my $contents = $tzil->slurp_file(
-        "build/lib/LocaleData/$lang/LC_MESSAGES/DZT-Sample.mo",
+        "build/share/LocaleData/$lang/LC_MESSAGES/DZT-Sample.mo",
     ), "Read in $lang .mo file";
     like $contents, qr/^Language: $lang$/m,
         "Compiled $lang .mo should have language content";
@@ -47,6 +47,7 @@ for my $lang (qw(de fr)) {
 ok $tzil = tzil({
     textdomain       => 'org.imperia.simplecal',
     lang_dir         => 'po',
+    share_dir        => 'lib',
     msgfmt           => 'msgfmt',
     lang_file_suffix => 'po',
     bin_file_suffix  => 'bo',
