@@ -7,6 +7,6 @@ plan skip_all => "Test::Pod::Coverage 1.08 required for testing POD coverage"
   if $@;
 
 all_pod_coverage_ok({
-    also_private   => [qw(gather_files)],
+    also_private   => [qw(gather_files DEMOLISH mvp_multivalue_args)],
     coverage_class => 'Pod::Coverage::CountParents',
 });
