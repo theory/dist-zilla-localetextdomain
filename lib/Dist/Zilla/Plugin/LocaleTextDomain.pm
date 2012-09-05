@@ -1,3 +1,5 @@
+# ABSTRACT: Compile Local::TextDomain language files
+
 package Dist::Zilla::Plugin::LocaleTextDomain;
 use strict;
 use warnings;
@@ -15,13 +17,7 @@ our $VERSION = 0.001;
 
 use IPC::Cmd qw(can_run);
 BEGIN {
-    subtype 'App', as 'Str', where {
-        if (my $path = can_run $_) {
-            $_ = $path;
-            return 1;
-        }
-        return 0;
-    }, message {
+    subtype 'App', as 'Str', where { !!can_run $_ },  message {
         qq{Cannot find "$_": Are the Unix gettext utilities installed?};
     };
 }
@@ -103,3 +99,61 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
+
+=head1 Name
+
+Dist::Zilla::Plugin::LocaleTextDomain - Compile Local::TextDomain language files
+
+=head1 Synopsis
+
+In F<dist.ini>
+
+  [@LocaleTextDomain]
+  textdomain = My-App
+  lang_dir = po
+
+=head1 Description
+
+This plugin compiles GNU gettext language files and adds them into the
+distribution for use by L<Locale::TextDomain>. This is useful if your
+distribution maintains gettext langauge files in a directory, with each file
+named for a language.
+
+=head2 Attributes
+
+=head3 C<textdomain>
+
+The textdomain to use for your language files, as defined by the
+L<Locale::TextDomain> documentation. Defaults to the name of your
+distribution.
+
+=head3 C<lang_dir>
+
+The directory containing your language files. Defaults to F<po>.
+
+=head3 C<msgfmt>
+
+The location of the C<msgfmt> program, which is distributed with
+L<GNU gettext|http://www.gnu.org/software/gettext/>.
+
+=head3 C<lang_file_suffix>
+
+Suffix used in the language file names. These are the files your translators
+maintain in your repository. Defaults to C<po>.
+
+=head3 C<bin_file_suffix>
+
+Suffix to use for the compiled language file. Defaults to C<mo>.
+
+=head1 Author
+
+David E. Wheeler <david@justatheory.com>
+
+=head1 Copyright and License
+
+This software is copyright (c) 2012 by David E. Wheeler.
+
+This is free software; you can redistribute it and/or modify it under the same
+terms as the Perl 5 programming language system itself.
+
+=cut

@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More;
+use Test::More 0.90;
 use Test::DZil;
 use IPC::Cmd 'can_run';
 use Capture::Tiny 'capture_stderr';
