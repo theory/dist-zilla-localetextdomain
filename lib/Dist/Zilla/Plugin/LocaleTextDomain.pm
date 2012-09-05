@@ -36,6 +36,7 @@ has textdomain => (
 has lang_dir => (
     is      => 'ro',
     isa     => 'Path::Class::Dir',
+    coerce  => 1,
     default => sub { dir 'po' },
 );
 
@@ -48,13 +49,13 @@ has msgfmt => (
 has lang_file_suffix => (
     is      => 'ro',
     isa     => 'Str',
-    default => 'mo',
+    default => 'po',
 );
 
 has bin_file_suffix => (
     is      => 'ro',
     isa     => 'Str',
-    default => 'po',
+    default => 'mo',
 );
 
 sub gather_files {
@@ -63,8 +64,8 @@ sub gather_files {
     require Dist::Zilla::File::InMemory;
 
     my $dir = $self->lang_dir;
-    my $mo  = $self->lang_file_suffix;
-    my $po  = $self->bin_file_suffix;
+    my $po  = $self->lang_file_suffix;
+    my $mo  = $self->bin_file_suffix;
     my $dom = $self->textdomain;
     my @cmd = (
         $self->msgfmt,
@@ -79,6 +80,7 @@ sub gather_files {
         Carp::croak("Cannot search $dir: no such directory");
     }
 
+    binmode STDOUT, ':raw' or die "Cannot set binmode on STDOUT: $!\n";
     for my $file ( $dir->children ) {
         next if $file->is_dir || $file !~ /[.]$po\z/;
         (my $lang = $file->basename) =~ s/[.]$po\z//;

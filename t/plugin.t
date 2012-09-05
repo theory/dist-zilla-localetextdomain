@@ -23,18 +23,14 @@ sub tzil {
                     # Subsequent arguments define imported plugins:
                     # [GatherDir]
                     'GatherDir',
-                    # [Credits]
-                    # filename = thanks.txt
-                    # thank = E. X. Ample
-                    # thank = The Academy
-                    @_,
+                    ['LocaleTextDomain', @_],
                 ),
             },
         },
     );
 }
 
-my $tzil = tzil 'LocaleTextDomain';
+ok my $tzil = tzil(), 'Create tzil';;
 
 my $stderr = capture_stderr { ok $tzil->build, 'Build it' };
 
@@ -42,8 +38,28 @@ for my $lang (qw(de fr)) {
     like $stderr, qr/^po.$lang[.]po: /m, "STDERR should have $lang.po message";
     ok my $contents = $tzil->slurp_file(
         "build/lib/LocaleData/$lang/LC_MESSAGES/DZT-Sample.mo",
-    ), "Read in $lang.po";
-    like $contents, qr/^Language: $lang$/m, "$lang.po should have language content";
+    ), "Read in $lang .mo file";
+    like $contents, qr/^Language: $lang$/m,
+        "Compiled $lang .mo should have language content";
+}
+
+# Specify the attributes.
+ok $tzil = tzil({
+    textdomain       => 'org.imperia.simplecal',
+    lang_dir         => 'po',
+    msgfmt           => 'msgfmt',
+    lang_file_suffix => 'po',
+    bin_file_suffix  => 'bo',
+}), 'Create another tzil';
+
+$stderr = capture_stderr { ok $tzil->build, 'Build again' };
+for my $lang (qw(de fr)) {
+    like $stderr, qr/^po.$lang[.]po: /m, "STDERR should have $lang.bo message";
+    ok my $contents = $tzil->slurp_file(
+        "build/lib/LocaleData/$lang/LC_MESSAGES/org.imperia.simplecal.bo",
+    ), "Read in $lang .bo file";
+    like $contents, qr/^Language: $lang$/m,
+        "Complied $lang .bo file should have language content";
 }
 
 done_testing;
