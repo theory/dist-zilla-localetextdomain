@@ -14,7 +14,7 @@ use namespace::autoclean;
 
 with 'Dist::Zilla::Role::FileGatherer';
 
-our $VERSION = 0.10;
+our $VERSION = '0.10';
 
 use IPC::Cmd qw(can_run);
 BEGIN {
