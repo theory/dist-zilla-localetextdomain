@@ -117,6 +117,7 @@ sub gather_files {
         Carp::croak("Cannot search $lang_dir: no such directory");
     }
 
+    $self->log("Compiling language files in $lang_dir");
     make_path $tmp_dir->stringify;
 
     for my $lang (@{ $self->language }) {
@@ -148,7 +149,7 @@ Dist::Zilla::Plugin::LocaleTextDomain - Compile Local::TextDomain language files
 
 =head1 Synopsis
 
-In F<dist.ini>
+In F<dist.ini>:
 
   [ShareDir]
   [@LocaleTextDomain]
@@ -161,15 +162,75 @@ In F<dist.ini>
 This plugin compiles GNU gettext language files and adds them into the
 distribution for use by L<Locale::TextDomain>. This is useful if your
 distribution maintains gettext language files in a directory, with each file
-named for a language.
+named for a language. The plugin uses C<msgfmt> to compile each file and then
+adds it to the distribution's F<share> directory. You can then use the
+L<ShareDir plugin|Dist::Zilla::Plugin::ShareDir> to make sure it gets
+installed in the right place.
 
-=head2 Attributes
+=head2 Installation
+
+Ideally, L<Locale::TextDomain> would search for language files in the shared
+directory for your distribution, as defined by L<File::ShareDir>. A
+L<patch|https://rt.cpan.org/Ticket/Display.html?id=79461> has been submitted
+to add this support, after which the example code from the L</Synopsis> should
+just work.
+
+Until that time, however, L<Locale::TextDomain> searches for files in Perl's
+C<@INC> directories, in which case the use of the
+L<ShareDir plugin|Dist::Zilla::Plugin::ShareDir> will not work. You will have
+to install the compiled language files into the F<lib> directory in your
+distribution. To do so, simply set the C<share_dir> attribute to "lib":
+
+  [@LocaleTextDomain]
+  textdomain = My-App
+  lang_dir = po
+  share_dir = lib
+
+If your distribution uses L<ExtUtils::MakeMaker> to do the installation, the
+files will now be installed in the proper location. If it relies on
+L<Module::Build>, you will have to do a bit of additional work. First, subclass
+Module::Build by creating F<inc/Module/Build/MyApp.pm> with this code:
+
+  package Module::Build::MyApp;
+  use parent 'Module::Build';
+
+  sub new {
+      my ( $class, %p ) = @_;
+      my $self = $class->SUPER::new(%p);
+      $self->add_build_element('mo');
+      return $self;
+  }
+
+Then tell L<Dist::Zilla> to use the subclass via the C<mb_class> attribute in
+F<dist.ini>:
+
+  [ModuleBuild]
+  mb_class = Module::Build::MyApp
+
+Now the F<.mo> files will be installed where L<Locale::TextDomain> can find
+them.
+
+=head2 Configuration
+
+Configuration attributes settable in F<dist.ini> to change the plugin
+behavior.
 
 =head3 C<textdomain>
 
 The textdomain to use for your language files, as defined by the
-L<Locale::TextDomain> documentation. Defaults to the name of your
-distribution.
+L<Locale::TextDomain> documentation. This should be the same value declared
+in each use of Locale::TextDomain in your module. For example, if such lines
+look like this:
+
+  use LocaleText::Domain qw(com.example.myApp);
+
+Then set it to such in your F<dist.ini>
+
+  [@LocaleTextDomain]
+  textdomain = com.example.myApp
+
+Defaults to the name of your distribution, which is the value that
+L<Locale::TextDomain> recommends you use.
 
 =head3 C<lang_dir>
 
@@ -182,8 +243,9 @@ should be added. Defaults to C<share>.
 
 =head3 C<msgfmt>
 
-The location of the C<msgfmt> program, which is distributed with
-L<GNU gettext|http://www.gnu.org/software/gettext/>.
+The location of the C<msgfmt> program, which is distributed with L<GNU
+gettext|http://www.gnu.org/software/gettext/>. Defaults to just C<msgfmt>,
+which should work if it's in your path.
 
 =head3 C<language>
 
