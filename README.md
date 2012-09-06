@@ -1,4 +1,4 @@
-Dist/Zilla/Plugin/LocaleTextDomain version 0.001
+Dist/Zilla/Plugin/LocaleTextDomain version 0.10
 ================================================
 
 Dist::Zilla::Plugin::LocaleTextDomain compiles GNU gettext language files and
