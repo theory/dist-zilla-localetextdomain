@@ -1,4 +1,4 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
-0.10  
+0.10  2012-09-06T22:12:48Z
       - Initial release with just the LocaleTextDomain plugin.
