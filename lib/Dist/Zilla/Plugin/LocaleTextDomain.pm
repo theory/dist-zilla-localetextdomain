@@ -19,7 +19,7 @@ our $VERSION = '0.11';
 use IPC::Cmd qw(can_run);
 BEGIN {
     subtype 'App', as 'Str', where { !!can_run $_ },  message {
-        qq{Cannot find "$_": Are the Unix gettext utilities installed?};
+        qq{Cannot find "$_": Are the GNU gettext utilities installed?};
     };
 }
 
