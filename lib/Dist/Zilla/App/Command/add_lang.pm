@@ -38,6 +38,9 @@ sub opt_spec {
         { default => 'UTF-8' },
     ],
     [
+        'pot-file|pot|p=s',  'pot file location',
+    ],
+    [
         'copyright-holder|c=s',  'name of the copyright holder',
     ],
     [
@@ -49,12 +52,16 @@ sub validate_args {
     my ($self, $opt, $args) = @_;
 
     require IPC::Cmd;
-    my $xget = $opt->xgettext;
+    my $xget = $opt->{xgettext};
     $opt->xgettext( IPC::Cmd::can_run($xget) )
         or die qq{Cannot find "$xget": Are the GNU gettext utilities installed?};
 
+    my $msginit = $opt->{msginit};
+    $opt->msginit( IPC::Cmd::can_run($msginit) )
+        or die qq{Cannot find "$msginit": Are the GNU gettext utilities installed?};
+
     require Encode;
-    my $enc = $opt->encoding;
+    my $enc = $opt->{encoding};
     die qq{"$enc" is not a valid encoding\n} if !Encode::find_encoding($enc);
 
     $self->usage_error('dzil add-lang takes one or more arguments')
