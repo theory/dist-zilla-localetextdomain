@@ -71,5 +71,3 @@ file_contents_like $pot,
     'my.pot should exist should have "Bye" msgid';
 
 done_testing;
-
-
