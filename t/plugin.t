@@ -35,7 +35,7 @@ ok my $tzil = tzil(), 'Create tzil';;
 my $stderr = capture_stderr { ok $tzil->build, 'Build it' };
 
 for my $lang (qw(de fr)) {
-    like $stderr, qr/^po.$lang[.]po: /m, "STDERR should have $lang.po message";
+    like $stderr, qr/^(?:po.$lang[.]po: )?19/m, "STDERR should have $lang.po message";
     ok my $contents = $tzil->slurp_file(
         "build/share/LocaleData/$lang/LC_MESSAGES/DZT-Sample.mo",
     ), "Read in $lang .mo file";
@@ -60,7 +60,7 @@ ok -e $tzil->tempdir->file("build/lib/LocaleData/fr/LC_MESSAGES/org.imperia.simp
 ok !-e $tzil->tempdir->file("build/lib/LocaleData/de/LC_MESSAGES/org.imperia.simplecal.bo"),
     'Should not have de .bo file';
 for my $lang (qw(fr)) {
-    like $stderr, qr/^po.$lang[.]po: /m, "STDERR should have $lang.bo message";
+    like $stderr, qr/^(?:po.$lang[.]po: )19/m, "STDERR should have $lang.bo message";
     ok my $contents = $tzil->slurp_file(
         "build/lib/LocaleData/$lang/LC_MESSAGES/org.imperia.simplecal.bo",
     ), "Read in $lang .bo file";
