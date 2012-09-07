@@ -47,7 +47,10 @@ has share_dir => (
 has _tmp_dir => (
     is      => 'ro',
     isa     => 'Path::Class::Dir',
-    default => sub { dir +File::Spec->tmpdir, "LocaleTextDomain.$$" },
+    default => sub {
+        require File::Temp;
+        dir File::Temp::tempdir(CLEANUP => 1);
+    },
 );
 
 has msgfmt => (
@@ -86,12 +89,6 @@ has language => (
     },
 );
 
-sub DEMOLISH {
-    my $self = shift;
-    my $dir = $self->_tmp_dir || return;
-    remove_tree $dir->stringify if -e $dir;
-}
-
 sub mvp_multivalue_args { return qw(language) }
 
 sub gather_files {
@@ -125,14 +122,16 @@ sub gather_files {
         my $dest = file $shr_dir, 'LocaleData', $lang, 'LC_MESSAGES',
             "$txt_dom.$bin_ext";
         my $temp = $tmp_dir->file("$lang.$bin_ext");
-        system(@cmd, $temp, $file) == 0 or do {
-            require Carp;
-            Carp::confess("Cannot compile $file");
-        };
         $self->add_file(
             Dist::Zilla::File::FromCode->new({
                 name => $dest->stringify,
-                code => sub { scalar $temp->slurp(iomode => '<:raw') },
+                code => sub {
+                    system(@cmd, $temp, $file) == 0 or do {
+                        require Carp;
+                        Carp::confess("Cannot compile $file");
+                    };
+                    scalar $temp->slurp(iomode => '<:raw');
+                },
             })
         );
     }
