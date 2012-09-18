@@ -33,7 +33,7 @@ sub validate_args {
     my ($self, $opt, $args) = @_;
 
     require IPC::Cmd;
-    my $xget = $opt->{xgettext} ||= 'xgettext';
+    my $xget = $opt->{xgettext} ||= 'xgettext' . ($^O eq 'MSWin32' ? '.exe' : '');
     die qq{Cannot find "$xget": Are the GNU gettext utilities installed?}
         unless IPC::Cmd::can_run($xget);
 

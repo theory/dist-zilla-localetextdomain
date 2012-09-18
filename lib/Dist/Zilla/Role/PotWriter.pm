@@ -124,7 +124,8 @@ Path to the C<xgettext> application. Defaults to just C<xgettext>
 
 =item C<encoding>
 
-Defaults to C<UTF-8>.
+Encoding to assume when scanning for localizable strings. Defaults to
+C<UTF-8>.
 
 =item C<package>
 

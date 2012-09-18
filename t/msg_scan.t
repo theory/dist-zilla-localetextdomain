@@ -1,6 +1,5 @@
 #!/usr/bin/perl -w
 
-use lib '/Users/david/dev/cpan/dist-zilla/lib';
 use strict;
 use warnings;
 use Test::More 0.90;
