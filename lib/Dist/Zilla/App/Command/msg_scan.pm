@@ -1,4 +1,4 @@
-package Dist::Zilla::App::Command::pot;
+package Dist::Zilla::App::Command::msg_scan;
 
 # ABSTRACT: Collect localization strings into a translation template
 
@@ -10,9 +10,9 @@ use namespace::autoclean;
 
 our $VERSION = '0.11';
 
-sub command_names { qw(pot) }
+sub command_names { qw(msg-scan) }
 
-sub abstract { 'collect localization strings into a translation template' }
+sub abstract { 'scan localization strings into a translation template' }
 
 sub usage_desc { '%c %o' }
 
@@ -124,7 +124,7 @@ __END__
 
 =head1 Name
 
-Dist::Zilla::App::Command::pot - Collect localization strings into a translation template
+Dist::Zilla::App::Command::msg_scan - Scan localization strings into a translation template
 
 =head1 Synopsis
 
@@ -136,7 +136,7 @@ In F<dist.ini>:
 
 On the command line:
 
-  dzil pot
+  dzil msg-scan
 
 =head1 Description
 

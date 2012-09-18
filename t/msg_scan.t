@@ -15,12 +15,11 @@ $ENV{DZIL_GLOBAL_CONFIG_ROOT} = 't';
 
 plan skip_all => 'xgettext not found' unless can_run 'xgettext';
 
-require_ok 'Dist::Zilla::App::Command::pot';
+require_ok 'Dist::Zilla::App::Command::msg_scan';
 
-my $result = test_dzil('t/dist', [qw(pot)]);
+my $result = test_dzil('t/dist', [qw(msg-scan)]);
 is($result->exit_code, 0, "dzil would have exited 0");
 
-#use Data::Dump; ddx $result;
 ok((grep {
     /extracting gettext strings into po.DZT-Sample[.]pot/
 } @{ $result->log_messages }),  'Should have logged the POT file creation');
@@ -43,7 +42,7 @@ file_contents_like $pot,
 
 # Try setting some stuff.
 $result = test_dzil('t/dist', [qw(
-    pot
+    msg-scan
     --pot-file my.pot
     --bugs-email homer@example.com
     --copyright-holder
