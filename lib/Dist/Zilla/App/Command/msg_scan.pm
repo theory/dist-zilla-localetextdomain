@@ -92,7 +92,7 @@ On the command line:
 
 =head1 Description
 
-This command scans you distribution's Perl modules and creates or updates a
+This command scans your distribution's Perl modules and creates or updates a
 L<GNU gettext|http://www.gnu.org/software/gettext/>-style language translation
 template. It relies on the settings from the
 L<C<LocaleTextDomain> plugin|Dist::Zilla::Plugin::LocaleTextDomain> for its

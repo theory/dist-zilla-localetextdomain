@@ -1,6 +1,6 @@
 package Dist::Zilla::App::Command::msg_init;
 
-# ABSTRACT: Add a language translation file to a dist
+# ABSTRACT: Add language translation catalogs to a dist
 
 use Dist::Zilla::App -command;
 use strict;
@@ -80,6 +80,7 @@ sub validate_args {
 sub pot_file {
     my ( $self, $opt ) = @_;
     my $dzil = $self->zilla;
+    # XXX Default to $lang_dir/$textdomain.pot?
     my $pot  = $self->{potfile} ||= $opt->{pot_file};
     if ($pot) {
         die "Cannot initialize language file: Template file $pot does not exist\n"
@@ -136,3 +137,80 @@ sub execute {
 }
 
 1;
+__END__
+
+=head1 Name
+
+Dist::Zilla::App::Command::msg_init - Add language translation catalogs to a dist
+
+=head1 Synopsis
+
+In F<dist.ini>:
+
+  [LocaleTextDomain]
+  textdomain = My-App
+  lang_dir = po
+
+On the command line:
+
+  dzil msg-init fr
+
+=head1 Description
+
+This command initializes and adds one or more
+L<GNU gettext|http://www.gnu.org/software/gettext/>-style language catalogs to
+your distribution. It can either use an existing template file (such as can be
+created with the L<C<msg-scan>|Dist::Zilla::App::Command::msg_init> command)
+or will scan your distribution's Perl modules directly to create the catalog.
+It relies on the settings from the
+L<C<LocaleTextDomain> plugin|Dist::Zilla::Plugin::LocaleTextDomain> for its
+settings, and requires that the GNU gettext utilities be available.
+
+=head2 Options
+
+=head3 C<--xgettext>
+
+The location of the C<xgettext> program, which is distributed with
+L<GNU gettext|http://www.gnu.org/software/gettext/>. Defaults to just
+C<xgettext> (or C<xgettext.exe> on Windows), which should work if it's in your
+path. Not used if C<--pot-file> points to an existing template file.
+
+=head3 C<--msginit>
+
+The location of the C<msginit> program, which is distributed with L<GNU
+gettext|http://www.gnu.org/software/gettext/>. Defaults to just C<msginit>
+(or C<msginit.exe> on Windows), which should work if it's in your path.
+
+=head3 C<--encoding>
+
+The encoding to assume the Perl modules are encoded in. Defaults to C<UTF-8>.
+
+=head3 C<--pot-file>
+
+The name of the template file to use to generate the message catalogs. If
+there isn't one, a temporary one will be created, the catalogs created from
+it, and then it will be deleted.
+
+=head3 C<--copyright-holder>
+
+Name of the application copyright holder. Defaults to the copyright holder
+defined in F<dist.ini>. Used only to generate a temporary template file.
+
+=head3 C<--bugs-email>
+
+Email address to which translation bug reports should be sent. Defaults to the
+email address of the first distribution author, if available. Used only to
+generate a temporary template file.
+
+=head1 Author
+
+David E. Wheeler <david@justatheory.com>
+
+=head1 Copyright and License
+
+This software is copyright (c) 2012 by David E. Wheeler.
+
+This is free software; you can redistribute it and/or modify it under the same
+terms as the Perl 5 programming language system itself.
+
+=cut
