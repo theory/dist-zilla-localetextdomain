@@ -1,4 +1,4 @@
-package Dist::Zilla::App::Command::add_lang;
+package Dist::Zilla::App::Command::msg_init;
 
 # ABSTRACT: Add a language translation file to a dist
 
@@ -18,7 +18,7 @@ sub DESTROY {
     $pot->remove;
 }
 
-sub command_names { qw(add-lang) }
+sub command_names { qw(msg-init) }
 
 sub abstract { 'add language translation files to a distribution' }
 
@@ -64,7 +64,7 @@ sub validate_args {
     my $enc = $opt->{encoding};
     die qq{"$enc" is not a valid encoding\n} if !Encode::find_encoding($enc);
 
-    $self->usage_error('dzil add-lang takes one or more arguments')
+    $self->usage_error('dzil msg-init takes one or more arguments')
         if @$args < 1;
 
     require Locale::Codes::Language;
