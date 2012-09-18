@@ -33,6 +33,12 @@ sub opt_spec {
     );
 }
 
+sub plugin {
+    my $self = shift;
+    $self->{plugin} ||= $self->zilla->plugin_named('LocaleTextDomain')
+        or croak 'LocaleTextDomain plugin not found in dist.ini!';
+}
+
 sub validate_args {
     my ($self, $opt, $args) = @_;
 
@@ -80,7 +86,6 @@ sub validate_args {
 sub pot_file {
     my ( $self, $opt ) = @_;
     my $dzil = $self->zilla;
-    # XXX Default to $lang_dir/$textdomain.pot?
     my $pot  = $self->{potfile} ||= $opt->{pot_file};
     if ($pot) {
         die "Cannot initialize language file: Template file $pot does not exist\n"
@@ -88,6 +93,11 @@ sub pot_file {
         return $pot;
     }
 
+    # Look for a template in the default location used by `msg-scan`.
+    $pot = file $self->plugin->lang_dir, $dzil->name . '.pot';
+    return $pot if -e $pot;
+
+    # Create a temporary template file.
     require File::Temp;
     my $tmp = $self->{tmp} = File::Temp->new(SUFFIX => '.pot', OPEN => 0);
     $pot = file $tmp->filename;
@@ -105,17 +115,8 @@ sub pot_file {
 sub execute {
     my ($self, $opt, $args) = @_;
 
-    my $dzil   = $self->zilla;
-    my $plugin = $dzil->plugin_named($opt->{plugin_name} || do {
-        my @plugins = grep {
-            $_->isa("Dist::Zilla::Plugin::LocaleTextDomain")
-        } @{ $self->zilla->plugins };
-        croak 'LocaleTextDomain plugin not found in dist.ini!' unless @plugins;
-        croak 'more than one LocaleTextDomain plugin found, use --plugin-name!'
-            if @plugins > 2;
-        $plugins[0]->plugin_name;
-    });
-
+    my $dzil     = $self->zilla;
+    my $plugin   = $self->plugin;
     my $lang_dir = $plugin->lang_dir;
     my $lang_ext = '.' . $plugin->lang_file_suffix;
     my $pot_file = $self->pot_file($opt);
@@ -187,9 +188,10 @@ The encoding to assume the Perl modules are encoded in. Defaults to C<UTF-8>.
 
 =head3 C<--pot-file>
 
-The name of the template file to use to generate the message catalogs. If
-there isn't one, a temporary one will be created, the catalogs created from
-it, and then it will be deleted.
+The name of the template file to use to generate the message catalogs. If not
+specified, C<$lang_dir/$textdomain.pot> will be returned if it exists.
+Othrewise, a temporary template file will be created by scanning the Perl
+sources, the catalogs created from it, and then it will be deleted.
 
 =head3 C<--copyright-holder>
 
