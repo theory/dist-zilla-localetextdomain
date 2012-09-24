@@ -6,6 +6,7 @@ use Moose::Role;
 use strict;
 use warnings;
 use Carp;
+use File::Path qw(make_path);
 use namespace::autoclean;
 
 our $VERSION = '0.11';
@@ -27,7 +28,7 @@ sub write_pot {
     my $dzil = $self->zilla;
 
     # Make sure the directory exists.
-    create_path $pot->parent->stringify unless -d $pot->parent;
+    make_path $pot->parent->stringify unless -d $pot->parent;
 
     # Need to do this before calling other methods, as they need the
     # files loaded to find various information.
