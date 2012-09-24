@@ -162,9 +162,4 @@ for my $spec (
     like $result->error, qr/\Q$msg/, "Should get $desc error";
 }
 
-
-#diag $result->error;
-#use Data::Dump; ddx $result;
-
 done_testing;
-

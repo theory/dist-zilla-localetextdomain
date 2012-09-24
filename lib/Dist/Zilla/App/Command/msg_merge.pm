@@ -1,6 +1,6 @@
-package Dist::Zilla::App::Command::msg_init;
+package Dist::Zilla::App::Command::msg_merge;
 
-# ABSTRACT: Add language translation catalogs to a dist
+# ABSTRACT: Merge localization strings into translation catalogs
 
 use Dist::Zilla::App -command;
 use strict;
@@ -8,7 +8,9 @@ use warnings;
 use Path::Class;
 use Dist::Zilla::Plugin::LocaleTextDomain;
 use Carp;
+use File::Basename;
 use Moose;
+use File::Copy;
 use File::Find::Rule;
 use namespace::autoclean;
 
@@ -16,16 +18,16 @@ our $VERSION = '0.11';
 
 with 'Dist::Zilla::Role::PotFile';
 
-sub command_names { qw(msg-init) }
+sub command_names { qw(msg-merge) }
 
-sub abstract { 'add language translation files to a distribution' }
+sub abstract { 'merge localization strings into translation catalogs' }
 
 sub usage_desc { '%c %o <language_code> [<langauge_code> ...]' }
 
 sub opt_spec {
     return (
         [ 'xgettext|x=s'         => 'location of xgttext utility'      ],
-        [ 'msginit|i=s'          => 'location of msginit utility'      ],
+        [ 'msgmerge|m=s'         => 'location of msgmerge utility'     ],
         [ 'encoding|e=s'         => 'character encoding to be used'    ],
         [ 'pot-file|pot|p=s'     => 'pot file location'                ],
         [ 'copyright-holder|c=s' => 'name of the copyright holder'     ],
@@ -41,9 +43,9 @@ sub validate_args {
     die qq{Cannot find "$xget": Are the GNU gettext utilities installed?}
         unless IPC::Cmd::can_run($xget);
 
-    my $init = $opt->{msginit} ||= 'msginit' . ($^O eq 'MSWin32' ? '.exe' : '');
-    die qq{Cannot find "$init": Are the GNU gettext utilities installed?}
-        unless IPC::Cmd::can_run($init);
+    my $merge = $opt->{msgmerge} ||= 'msgmerge' . ($^O eq 'MSWin32' ? '.exe' : '');
+    die qq{Cannot find "$merge": Are the GNU gettext utilities installed?}
+        unless IPC::Cmd::can_run($merge);
 
     if (my $enc = $opt->{encoding}) {
         require Encode;
@@ -52,29 +54,13 @@ sub validate_args {
     } else {
         $opt->{encoding} = 'UTF-8';
     }
+}
 
-    $self->usage_error('dzil msg-init takes one or more arguments')
-        if @{ $args } < 1;
-
-    require Locale::Codes::Language;
-    require Locale::Codes::Country;
-
-    for my $lang ( @{ $args } ) {
-        my ($name, $enc) = split /[.]/, $lang, 2;
-        if ($enc) {
-            require Encode;
-            die qq{"$enc" is not a valid encoding\n}
-                unless Encode::find_encoding($enc);
-        }
-
-        my ($lang, $country) = split /[-_]/, $name;
-        die qq{"$lang" is not a valid language code\n}
-            unless Locale::Codes::Language::code2language($lang);
-        if ($country) {
-            die qq{"$country" is not a valid country code\n}
-                unless Locale::Codes::Country::code2country($country);
-        }
-    }
+sub _po_files {
+    my ( $self, $plugin ) = @_;
+    require File::Find::Rule;
+    my $lang_ext = $plugin->lang_file_suffix;
+    return File::Find::Rule->file->name("*.$lang_ext")->in($plugin->lang_dir);
 }
 
 sub execute {
@@ -87,19 +73,21 @@ sub execute {
     my $lang_ext = '.' . $plugin->lang_file_suffix;
     my $pot_file = $self->pot_file( %{ $opt } );
 
-    my @cmd = (
-        $opt->{msginit},
-        '--input=' . $pot_file,
-        '--no-translator',
-    );
+    my @cmd = ($opt->{msgmerge}, '--quiet');
+    my @pos = @{ $args } ? @{ $args } : $self->_po_files( $plugin );
+    $dzil->log_fatal("No langugage catalot files found") unless @pos;
 
-    for my $lang (@{ $args }) {
-        # Strip off encoding.
-        (my $name = $lang) =~ s/[.].+$//;
-        my $dest = $lang_dir->file( $name . $lang_ext );
-        die "$dest already exists\n" if -e $dest;
-        system(@cmd, "--locale=$lang", '--output-file=' . $dest) == 0
-            or die "Cannot generate $dest\n";
+    for my $file (@pos) {
+        $self->log("Merging gettext strings into $file");
+        my $temp = $file . '.old';
+        move $file, $temp;
+        if (system(@cmd, $temp, $pot_file, '-o', $file) == 0) {
+            unlink $temp;
+        } else {
+            unlink $file;
+            move $temp, $file;
+            die "Cannot merge into $file\n";
+        }
     }
 }
 
@@ -108,7 +96,7 @@ __END__
 
 =head1 Name
 
-Dist::Zilla::App::Command::msg_init - Add language translation catalogs to a dist
+Dist::Zilla::App::Command::msg_merge - Merge localization strings into translation catalogs
 
 =head1 Synopsis
 
@@ -120,18 +108,24 @@ In F<dist.ini>:
 
 On the command line:
 
-  dzil msg-init fr
+  dzil msg-init fr de
+
+Later, after adding or modifying localizations strings:
+
+  dzil msg-merge
 
 =head1 Description
 
-This command initializes and adds one or more
-L<GNU gettext|http://www.gnu.org/software/gettext/>-style language catalogs to
-your distribution. It can either use an existing template file (such as can be
-created with the L<C<msg-scan>|Dist::Zilla::App::Command::msg_init> command)
-or will scan your distribution's Perl modules directly to create the catalog.
-It relies on the settings from the
-L<C<LocaleTextDomain> plugin|Dist::Zilla::Plugin::LocaleTextDomain> for its
-settings, and requires that the GNU gettext utilities be available.
+This command merges localization strings into translation catalog files. The
+strings are merged from a L<GNU
+gettext|http://www.gnu.org/software/gettext/>-style language translation
+template, which can be created by the L<C<msg-scan>
+command|Dist::Zilla::App::Command::msg_merge>. If no template file is found or
+can be found, the Perl sources will be scanned to create a temporary one.
+
+This command relies on the settings from the L<C<LocaleTextDomain>
+plugin|Dist::Zilla::Plugin::LocaleTextDomain> for its settings, and requires
+that the GNU gettext utilities be available.
 
 =head2 Options
 
@@ -140,13 +134,13 @@ settings, and requires that the GNU gettext utilities be available.
 The location of the C<xgettext> program, which is distributed with
 L<GNU gettext|http://www.gnu.org/software/gettext/>. Defaults to just
 C<xgettext> (or C<xgettext.exe> on Windows), which should work if it's in your
-path. Not used if C<--pot-file> points to an existing template file.
+path. Not used if C<--pot-file> is specified.
 
-=head3 C<--msginit>
+=head3 C<--msgmerge>
 
-The location of the C<msginit> program, which is distributed with L<GNU
-gettext|http://www.gnu.org/software/gettext/>. Defaults to just C<msginit>
-(or C<msginit.exe> on Windows), which should work if it's in your path.
+The location of the C<msgmerge> program, which is distributed with L<GNU
+gettext|http://www.gnu.org/software/gettext/>. Defaults to just C<msgmerge>
+(or C<msgmerge.exe> on Windows), which should work if it's in your path.
 
 =head3 C<--encoding>
 
@@ -154,7 +148,7 @@ The encoding to assume the Perl modules are encoded in. Defaults to C<UTF-8>.
 
 =head3 C<--pot-file>
 
-The name of the template file to use to generate the message catalogs. If not
+The name of the template file to use to merge the message catalogs. If not
 specified, C<$lang_dir/$textdomain.pot> will be used if it exists. Otherwise,
 a temporary template file will be created by scanning the Perl sources.
 
