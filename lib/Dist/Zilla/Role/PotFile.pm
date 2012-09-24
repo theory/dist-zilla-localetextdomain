@@ -14,16 +14,6 @@ requires 'zilla';
 
 our $VERSION = '0.11';
 
-has plugin => (
-    is      => 'ro',
-    isa     => 'Dist::Zilla::Plugin::LocaleTextDomain',
-    lazy    => 1,
-    default => sub {
-        shift->zilla->plugin_named('LocaleTextDomain')
-            or croak 'LocaleTextDomain plugin not found in dist.ini!';
-    }
-);
-
 sub pot_file {
     my ( $self, %p ) = @_;
     my $dzil = $self->zilla;
@@ -34,7 +24,10 @@ sub pot_file {
     }
 
     # Look for a template in the default location used by `msg-scan`.
-    $pot = file $self->plugin->lang_dir, $dzil->name . '.pot';
+    my $plugin = $self->zilla->plugin_named('LocaleTextDomain')
+            or croak 'LocaleTextDomain plugin not found in dist.ini!';
+
+    $pot = file $plugin->lang_dir, $dzil->name . '.pot';
     return $pot if -e $pot;
 
     # Create a temporary template file.

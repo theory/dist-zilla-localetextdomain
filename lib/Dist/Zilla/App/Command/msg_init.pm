@@ -80,8 +80,9 @@ sub validate_args {
 sub execute {
     my ($self, $opt, $args) = @_;
 
-    my $dzil     = $self->zilla;
-    my $plugin   = $self->plugin;
+    my $dzil   = $self->zilla;
+    my $plugin = $self->zilla->plugin_named('LocaleTextDomain')
+        or croak 'LocaleTextDomain plugin not found in dist.ini!';
     my $lang_dir = $plugin->lang_dir;
     my $lang_ext = '.' . $plugin->lang_file_suffix;
     my $pot_file = $self->pot_file(
