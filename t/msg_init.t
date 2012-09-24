@@ -28,7 +28,7 @@ is Dist::Zilla::App::Command::msg_init->usage_desc,
     'Should have correct usage description';
 is_deeply [Dist::Zilla::App::Command::msg_init->opt_spec], [
     [ 'xgettext|x=s'         => 'location of xgttext utility'      ],
-    [ 'msginit|x=s'          => 'location of msginit utility'      ],
+    [ 'msginit|i=s'          => 'location of msginit utility'      ],
     [ 'encoding|e=s'         => 'character encoding to be used'    ],
     [ 'pot-file|pot|p=s'     => 'pot file location'                ],
     [ 'copyright-holder|c=s' => 'name of the copyright holder'     ],
@@ -109,7 +109,7 @@ ok $result = test_dzil('t/dist', [qw(msg-init ja --pot-file nonesuch.pot)]),
     'Init with nonexistent pot file';
 isnt $result->exit_code, 0, 'Should not have exited 0';
 like $result->error,
-    qr/\QCannot initialize language file: Template file nonesuch.pot does not exist/,
+    qr/\QTemplate file nonesuch.pot does not exist/,
     'Should get error trying to use nonexistent POT file';
 
 # Fail with various other invalid values.

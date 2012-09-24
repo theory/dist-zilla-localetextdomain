@@ -14,7 +14,7 @@ use namespace::autoclean;
 
 our $VERSION = '0.11';
 
-with 'Dist::Zilla::Role::PotWriter';
+with 'Dist::Zilla::Role::PotFile';
 
 sub command_names { qw(msg-init) }
 
@@ -25,18 +25,12 @@ sub usage_desc { '%c %o <language_code> [<langauge_code> ...]' }
 sub opt_spec {
     return (
         [ 'xgettext|x=s'         => 'location of xgttext utility'      ],
-        [ 'msginit|x=s'          => 'location of msginit utility'      ],
+        [ 'msginit|i=s'          => 'location of msginit utility'      ],
         [ 'encoding|e=s'         => 'character encoding to be used'    ],
         [ 'pot-file|pot|p=s'     => 'pot file location'                ],
         [ 'copyright-holder|c=s' => 'name of the copyright holder'     ],
         [ 'bugs-email|b=s'       => 'email address for reporting bugs' ],
     );
-}
-
-sub plugin {
-    my $self = shift;
-    $self->{plugin} ||= $self->zilla->plugin_named('LocaleTextDomain')
-        or croak 'LocaleTextDomain plugin not found in dist.ini!';
 }
 
 sub validate_args {
@@ -83,35 +77,6 @@ sub validate_args {
     }
 }
 
-sub pot_file {
-    my ( $self, $opt ) = @_;
-    my $dzil = $self->zilla;
-    my $pot  = $self->{potfile} ||= $opt->{pot_file};
-    if ($pot) {
-        die "Cannot initialize language file: Template file $pot does not exist\n"
-            unless -e $pot;
-        return $pot;
-    }
-
-    # Look for a template in the default location used by `msg-scan`.
-    $pot = file $self->plugin->lang_dir, $dzil->name . '.pot';
-    return $pot if -e $pot;
-
-    # Create a temporary template file.
-    require File::Temp;
-    my $tmp = $self->{tmp} = File::Temp->new(SUFFIX => '.pot', OPEN => 0);
-    $pot = file $tmp->filename;
-    $self->log('extracting gettext strings');
-    $self->write_pot(
-        to               => $pot,
-        xgettext         => $opt->{xgettext},
-        encoding         => $opt->{encoding},
-        copyright_holder => $opt->{copyright_holder},
-        bugs_email       => $opt->{bugs_email},
-    );
-    return $self->{potfile} = $pot;
-}
-
 sub execute {
     my ($self, $opt, $args) = @_;
 
@@ -119,7 +84,10 @@ sub execute {
     my $plugin   = $self->plugin;
     my $lang_dir = $plugin->lang_dir;
     my $lang_ext = '.' . $plugin->lang_file_suffix;
-    my $pot_file = $self->pot_file($opt);
+    my $pot_file = $self->pot_file(
+        %{ $opt },
+        pot_file => $self->{potfile} ||= $opt->{pot_file},
+    );
 
     my @cmd = (
         $opt->{msginit},
