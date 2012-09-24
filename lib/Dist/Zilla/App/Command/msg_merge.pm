@@ -165,7 +165,7 @@ generate a temporary template file.
 
 =head3 C<--backup>
 
-Back up each language file before merging it. The backiup files will have the
+Back up each language file before merging it. The backup files will have the
 suffix F<~>.
 
 =head1 Author
