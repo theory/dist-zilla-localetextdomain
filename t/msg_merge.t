@@ -28,11 +28,12 @@ is Dist::Zilla::App::Command::msg_merge->usage_desc,
     'Should have correct usage description';
 is_deeply [Dist::Zilla::App::Command::msg_merge->opt_spec], [
     [ 'xgettext|x=s'         => 'location of xgttext utility'      ],
-    [ 'msgmerge|m=s'         => 'location of msgmerge utility'      ],
+    [ 'msgmerge|m=s'         => 'location of msgmerge utility'     ],
     [ 'encoding|e=s'         => 'character encoding to be used'    ],
     [ 'pot-file|pot|p=s'     => 'pot file location'                ],
     [ 'copyright-holder|c=s' => 'name of the copyright holder'     ],
     [ 'bugs-email|b=s'       => 'email address for reporting bugs' ],
+    [ 'backup!'              => 'back up files before merging'     ],
 ], 'Option spec should be correct';
 
 # Start with no file specified.
@@ -48,7 +49,7 @@ for my $lang (qw(de fr)) {
         "Should have message for merging $lang.po";
     my $path = file $result->tempdir, qw(source po), "$lang.po";
     file_exists_ok $path, "$po should exist";
-    file_not_exists_ok "$path.old", "$po.old should not exist";
+    file_not_exists_ok "$path~", "$po~ should not exist";
     file_contents_like $path,
         qr/^\Qmsgid "Hi"\E$/m, qq{$po should have "Hi" msgid};
     file_contents_like $path,
@@ -58,7 +59,7 @@ for my $lang (qw(de fr)) {
 # Try specifying a file.
 my $de = file qw(po de.po);
 my $fr = file qw(po fr.po);
-ok $result = test_dzil('t/dist', [qw(msg-merge), $de]),
+ok $result = test_dzil('t/dist', [qw(msg-merge), $de, '--backup']),
     'Call msg-merge with de.po arg';
 is $result->exit_code, 0, 'Should have exited 0';
 ok got_msg(qr/extracting gettext strings/),
@@ -69,7 +70,7 @@ my $path = file $result->tempdir, 'source', $de;
 ok got_msg(qr/Merging gettext strings into $de/),
     "Should have message for merging $de";
 file_exists_ok $path, "$de should exist";
-file_not_exists_ok "$path.old", "$de.old should not exist";
+file_exists_ok "$path~", "$de~ backup should not exist";
 file_contents_like $path,
     qr/^\Qmsgid "Hi"\E$/m, qq{$de should have "Hi" msgid};
 file_contents_like $path,
@@ -80,7 +81,7 @@ $path = file $result->tempdir, 'source', $fr;
 ok !got_msg(qr/Merging gettext strings into $fr/),
     "Should not have message for merging $fr";
 file_exists_ok $path, "$fr should exist";
-file_not_exists_ok "$path.old", "$fr.old should not exist";
+file_not_exists_ok "$path~", "$fr~ should not exist";
 file_contents_unlike $path,
     qr/^\Qmsgid "Hi"\E$/m, qq{$fr should not have "Hi" msgid};
 file_contents_like $path,
@@ -94,6 +95,7 @@ ok $result = test_dzil('t/dist', [
     '--pot-file'         => file(qw(po org.imperia.simplecal.pot)),
     '--copyright-holder' => 'Homer Simpson',
     '--bugs-email'       => 'foo@bar.com',
+    '--backup',
 ]), 'Init with options';
 
 is $result->exit_code, 0, 'Should have exited 0';
@@ -106,7 +108,7 @@ for my $lang (qw(de fr)) {
         "Should have message for merging $lang.po";
     my $path = file $result->tempdir, qw(source po), "$lang.po";
     file_exists_ok $path, "$po should exist";
-    file_not_exists_ok "$path.old", "$po.old should not exist";
+    file_not_exists_ok "$path~", "$po~ should not exist (no changes)";
     file_contents_unlike $path,
         qr/^\Qmsgid "Hi"\E$/m, qq{$po should not have "Hi" msgid};
     file_contents_like $path,
@@ -129,7 +131,6 @@ sub got_msg {
     return 0;
 }
 
-#diag $result->error;
 #use Data::Dump; ddx $result->log_messages;
 
 done_testing;

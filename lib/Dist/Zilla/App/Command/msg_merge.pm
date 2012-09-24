@@ -32,6 +32,7 @@ sub opt_spec {
         [ 'pot-file|pot|p=s'     => 'pot file location'                ],
         [ 'copyright-holder|c=s' => 'name of the copyright holder'     ],
         [ 'bugs-email|b=s'       => 'email address for reporting bugs' ],
+        [ 'backup!'              => 'back up files before merging'     ],
     );
 }
 
@@ -73,19 +74,18 @@ sub execute {
     my $lang_ext = '.' . $plugin->lang_file_suffix;
     my $pot_file = $self->pot_file( %{ $opt } );
 
-    my @cmd = ($opt->{msgmerge}, '--quiet');
     my @pos = @{ $args } ? @{ $args } : $self->_po_files( $plugin );
-    $dzil->log_fatal("No langugage catalot files found") unless @pos;
+    $dzil->log_fatal("No langugage catalog files found") unless @pos;
+
+    my @cmd = (
+        $opt->{msgmerge},
+        qw(--quiet --update),
+        '--backup=' . ($opt->{backup} ? 'simple' : 'none'),
+    );
 
     for my $file (@pos) {
         $self->log("Merging gettext strings into $file");
-        my $temp = $file . '.old';
-        move $file, $temp;
-        if (system(@cmd, $temp, $pot_file, '-o', $file) == 0) {
-            unlink $temp;
-        } else {
-            unlink $file;
-            move $temp, $file;
+        if (system(@cmd, $file, $pot_file) != 0) {
             die "Cannot merge into $file\n";
         }
     }
@@ -162,6 +162,11 @@ defined in F<dist.ini>. Used only to generate a temporary template file.
 Email address to which translation bug reports should be sent. Defaults to the
 email address of the first distribution author, if available. Used only to
 generate a temporary template file.
+
+=head3 C<--backup>
+
+Back up each language file before merging it. The backiup files will have the
+suffix F<~>.
 
 =head1 Author
 
