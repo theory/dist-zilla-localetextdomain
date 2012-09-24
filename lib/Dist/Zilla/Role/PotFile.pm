@@ -1,6 +1,6 @@
 package Dist::Zilla::Role::PotFile;
 
-# ABSTRACT: Something that writes gettext langauge translation template file
+# ABSTRACT: Something finds or creates a gettext language translation template file
 
 use Moose::Role;
 use strict;
@@ -57,7 +57,7 @@ __END__
 
 =head1 Name
 
-Dist::Zilla::Plugin::PotFile - Something that writes gettext langauge translation template file
+Dist::Zilla::Plugin::PotFile - Something finds or creates a gettext language translation template file
 
 =head1 Synopsis
 
@@ -73,7 +73,7 @@ Dist::Zilla::Plugin::PotFile - Something that writes gettext langauge translatio
 
 =head1 Description
 
-This role provides a utilty method for finding or creating a
+This role provides a utility method for finding or creating a
 L<GNU gettext|http://www.gnu.org/software/gettext/>-style language translation
 template.
 
@@ -85,22 +85,38 @@ template.
 
 Finds or creates a temporary
 L<GNU gettext|http://www.gnu.org/software/gettext/>-style language translation
-file. The supported parameters are:
+file. It works in this order:
+
+=over
+
+=item *
+
+If the C<pot_file> parameter is passed a value and the named file exists, it
+will be returned.
+
+=item *
+
+If the file stored in the language directory, as specified for the
+L<C<LocaleTextDomain> plugin|Dist::Zilla::Plugin::LocaleTextDomain>, with the
+name of the distribution and ending in F<.pot>, it will be returned. This is
+the default location for a template file created by the
+L<C<msg-scan>|Dist::Zilla::App::Command::msg_scan> command.
+
+=item *
+
+The sources will be scanned for localizable strings and a temporary template
+file created. This file will automatically be deleted at program exit.
+
+=back
+
+The supported parameters are:
 
 =over
 
 =item C<pot_file>
 
-A path to an existing translation template file.
-
-=item C<to>
-
-L<Path::Class::File> object representing the file to write to. Required.
-
-=item C<scan_files>
-
-Array reference listing the files to scan. Defaults to all F<*.pm> files
-gathered by L<Dist::Zilla>.
+A path to an existing translation template file. If this file does not exist,
+an exception will be thrown.
 
 =item C<xgettext>
 
@@ -112,16 +128,6 @@ Path to the C<xgettext> application. Defaults to just C<xgettext>
 Encoding to assume when scanning for localizable strings. Defaults to
 C<UTF-8>.
 
-=item C<package>
-
-The name of the localization package. Defaults to the distribution name as
-configured for L<Dist::Zilla>.
-
-=item C<version>
-
-The version of the package. Defaults to the version as configured for
-L<Dist::Zilla>.
-
 =item C<copyright_holder>
 
 The name of the translation copyright holder. Defaults to the copyright holder
@@ -130,7 +136,7 @@ configured for L<Dist::Zilla>.
 =item C<bugs_email>
 
 Email address for reporting translation bugs. Defaults to the email address of
-the first author known to L<Dist::Zilla>, if availale and parseable by
+the first author known to L<Dist::Zilla>, if available and parseable by
 L<Email::Address>.
 
 =back

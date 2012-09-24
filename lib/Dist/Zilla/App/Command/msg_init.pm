@@ -158,7 +158,7 @@ The encoding to assume the Perl modules are encoded in. Defaults to C<UTF-8>.
 
 The name of the template file to use to generate the message catalogs. If not
 specified, C<$lang_dir/$textdomain.pot> will be returned if it exists.
-Othrewise, a temporary template file will be created by scanning the Perl
+Otherwise, a temporary template file will be created by scanning the Perl
 sources, the catalogs created from it, and then it will be deleted.
 
 =head3 C<--copyright-holder>

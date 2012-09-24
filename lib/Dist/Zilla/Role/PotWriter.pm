@@ -1,6 +1,6 @@
 package Dist::Zilla::Role::PotWriter;
 
-# ABSTRACT: Something that writes gettext langauge translation template file
+# ABSTRACT: Something that writes gettext language translation template file
 
 use Moose::Role;
 use strict;
@@ -77,7 +77,7 @@ __END__
 
 =head1 Name
 
-Dist::Zilla::Plugin::PotWriter - Something that writes gettext langauge translation template file
+Dist::Zilla::Plugin::PotWriter - Something that writes gettext language translation template file
 
 =head1 Synopsis
 
@@ -93,7 +93,7 @@ Dist::Zilla::Plugin::PotWriter - Something that writes gettext langauge translat
 
 =head1 Description
 
-This role provides a utilty method for generating a
+This role provides a utility method for generating a
 L<GNU gettext|http://www.gnu.org/software/gettext/>-style language translation
 template.
 
@@ -145,7 +145,7 @@ configured for L<Dist::Zilla>.
 =item C<bugs_email>
 
 Email address for reporting translation bugs. Defaults to the email address of
-the first author known to L<Dist::Zilla>, if availale and parseable by
+the first author known to L<Dist::Zilla>, if available and parseable by
 L<Email::Address>.
 
 =back

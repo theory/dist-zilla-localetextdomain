@@ -12,3 +12,5 @@ __DATA__
 gettext
 textdomain
 ShareDir
+localizable
+parseable
