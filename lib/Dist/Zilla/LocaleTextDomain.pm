@@ -21,21 +21,18 @@ In F<dist.ini>:
   textdomain = My-App
   share_dir = share
 
-Create a language template file, F<po/My-App.pot>:
+Scan localizable messages from your Perl libraries into a language template
+file, F<po/My-App.pot>:
 
   dzil msg-scan
 
-Create language translation catalogs:
+Initialize language translation files:
 
   dzil msg-init fr de.UTF-8
 
-Update existing catalogs:
+Merge changes to localizable messages into existing translation files:
 
   dzil msg-merge
-
-In F<MANIFEST.SKIP>, prevent distribution of the F<po> directory:
-
-  ^po/
 
 Binary message catalogs are automatically added to your distribution by the
 C<build> and C<release> commands:
@@ -64,15 +61,15 @@ for my distribution was harder, so I decided to write
 Dist::Zilla::LocaleTextDomain to make life simpler for developers who manage
 their distributions with L<Dist::Zilla>.
 
-So what follows is a quick tutorial on using L<Locale::TextDomain> in your
-code and managing it with Dist::Zilla::LocaleTextDomain.
+What follows is a quick tutorial on using L<Locale::TextDomain> in your code
+and managing it with Dist::Zilla::LocaleTextDomain.
 
 =head1 This is my domain
 
 First thing to do is to start using L<Locale::TextDomain> in your code. Load
 it into each module with the name of your distribution, as set by the C<name>
-attribute in your F<dist.ini> file. So if your F<dist.ini> looks something
-like this:
+attribute in your F<dist.ini> file. For example, if your F<dist.ini> looks
+something like this:
 
   name    = My-GreatApp
   author  = Homer Simpson <homer@example.com>
@@ -124,10 +121,10 @@ else to come along and start translating for you.
 
 =head2 The setup
 
-So now you're localizing your code. Great! What's next? Officially, nothing.
-If you never do anything else, your code will always emit the messages as
-written. So you can ship it and things will work just as if you had never
-done any localization.
+Now you're localizing your code. Great! What's next? Officially, nothing. If
+you never do anything else, your code will always emit the messages as
+written. You can ship it and things will work just as if you had never done
+any localization.
 
 But what's the fun in that? Let's set things up so that translation catalogs
 will be built and distributed once they're written. Add these lines to your
@@ -164,8 +161,8 @@ line from C<dzil build>, though:
 
   [LocaleTextDomain] Skipping language compilation: directory po does not exist
 
-So at least you know it was looking for something to compile for distribution.
-Let's give it something to find.
+Now at least you know it was looking for something to compile for
+distribution. Let's give it something to find.
 
 =head2 Initialize languages
 
@@ -222,11 +219,11 @@ Here's an optional tweak: add this line to your C<MANIFEST.SKIP>:
 This prevents the F<po> directory and its contents from being included in the
 distribution. Sure, you can include them if you like, but they're not required
 for the running of your app; the generated binary catalog files are all you
-need. So might as well leave out the translation files.
+need. Might as well leave out the translation files.
 
 =head2 Mergers and acquisitions
 
-So you've got translation files and helpful translators given them a workover.
+You've got translation files and helpful translators given them a workover.
 What happens when you change your code, add new messages, or modify existing
 ones? The translation files need to periodically be updated with those
 changes, so that your translators can deal with them. We got you covered with
@@ -253,7 +250,7 @@ simply list them on the command-line:
 =head2 What's the scan, man
 
 Both the C<msg-init> and C<msg-merge> commands depend on a translation
-template file to create and merge language files. So far, this has been
+template file to create and merge language files. Thus far, this has been
 invisible: they will create a temporary template file to do their work, and
 then delete it when they're done.
 
