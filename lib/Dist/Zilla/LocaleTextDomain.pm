@@ -17,7 +17,7 @@ Dist::Zilla::LocaleTextDomain - Tools for managing Locale::TextDomain language c
 In F<dist.ini>:
 
   [ShareDir]
-  [@LocaleTextDomain]
+  [LocaleTextDomain]
   textdomain = My-App
   share_dir = share
 
