@@ -14,3 +14,5 @@ textdomain
 ShareDir
 localizable
 parseable
+Perlers
+colour

@@ -110,7 +110,7 @@ sub gather_files {
     );
 
     unless (-d $lang_dir) {
-        $self->zilla->log(
+        $self->log(
             "Skipping language compilation: directory $lang_dir does not exist"
         );
         return;
@@ -153,7 +153,7 @@ Dist::Zilla::Plugin::LocaleTextDomain - Compile Local::TextDomain language files
 In F<dist.ini>:
 
   [ShareDir]
-  [@LocaleTextDomain]
+  [LocaleTextDomain]
   textdomain = My-App
   lang_dir = po
   share_dir = share
@@ -182,7 +182,7 @@ L<ShareDir plugin|Dist::Zilla::Plugin::ShareDir> will not work. You will have
 to install the compiled language files into the F<lib> directory in your
 distribution. To do so, simply set the C<share_dir> attribute to "lib":
 
-  [@LocaleTextDomain]
+  [LocaleTextDomain]
   textdomain = My-App
   lang_dir = po
   share_dir = lib
@@ -227,7 +227,7 @@ look like this:
 
 Then set it to such in your F<dist.ini>
 
-  [@LocaleTextDomain]
+  [LocaleTextDomain]
   textdomain = com.example.myApp
 
 Defaults to the name of your distribution, which is the value that
