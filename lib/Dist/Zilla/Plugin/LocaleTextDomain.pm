@@ -110,8 +110,10 @@ sub gather_files {
     );
 
     unless (-d $lang_dir) {
-        require Carp;
-        Carp::croak("Cannot search $lang_dir: no such directory");
+        $self->zilla->log(
+            "Skipping language compilation: directory $lang_dir does not exist"
+        );
+        return;
     }
 
     $self->log("Compiling language files in $lang_dir");
