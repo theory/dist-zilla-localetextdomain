@@ -9,6 +9,7 @@ use Path::Class;
 use Dist::Zilla::Plugin::LocaleTextDomain;
 use File::Basename;
 use Moose;
+use IPC::Run qw(run);
 use File::Copy;
 use File::Find::Rule;
 use namespace::autoclean;
@@ -86,9 +87,10 @@ sub execute {
 
     for my $file (@pos) {
         $self->log("Merging gettext strings into $file");
-        if (system(@cmd, $file, $pot_file) != 0) {
-            $dzil->log_fatal("Cannot merge into $file");
-        }
+        run(
+            [@cmd, $file, $pot_file],
+            undef, sub { $dzil->log(@_) }
+        ) or $dzil->log_fatal("Cannot merge into $file");
     }
 }
 

@@ -6,6 +6,7 @@ use warnings;
 use Moose;
 use Path::Class;
 use IPC::Cmd qw(can_run);
+use IPC::Run qw(run);
 use MooseX::Types::Path::Class;
 use Moose::Util::TypeConstraints;
 use Dist::Zilla::File::FromCode;
@@ -94,6 +95,7 @@ sub mvp_multivalue_args { return qw(language) }
 sub gather_files {
     my ($self, $arg) = @_;
 
+    my $dzil     = $self->zilla;
     my $lang_dir = $self->lang_dir;
     my $lang_ext = $self->lang_file_suffix;
     my $bin_ext  = $self->bin_file_suffix;
@@ -128,10 +130,10 @@ sub gather_files {
             Dist::Zilla::File::FromCode->new({
                 name => $dest->stringify,
                 code => sub {
-                    system(@cmd, $temp, $file) == 0 or do {
-                        require Carp;
-                        Carp::confess("Cannot compile $file");
-                    };
+                    run(
+                        [@cmd, $temp, $file],
+                        undef, sub { $dzil->log(@_) }
+                    ) or $dzil->log_fatal("Cannot compile $file");
                     scalar $temp->slurp(iomode => '<:raw');
                 },
             })

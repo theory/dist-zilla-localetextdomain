@@ -39,6 +39,7 @@ utilities. It also requires the following non-core modules:
 * Encode
 * File::Find::Rule
 * IPC::Cmd
+* IPC::Run
 * Locale::Codes::Country
 * Locale::Codes::Language
 * Moose

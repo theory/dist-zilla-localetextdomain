@@ -1,6 +1,8 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
 0.11
+      - Switched from `system()` to IPC::Run, so that STDERR messages can be
+        passed to the Dist::Zilla logger.
 
 0.10  2012-09-06T22:12:48Z
       - Initial release with just the LocaleTextDomain plugin.
