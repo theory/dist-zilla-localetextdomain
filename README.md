@@ -1,10 +1,12 @@
-Dist/Zilla/Plugin/LocaleTextDomain version 0.11
-================================================
+Dist/Zilla/LocaleTextDomain version 0.11
+========================================
 
-Dist::Zilla::Plugin::LocaleTextDomain compiles GNU gettext language files and
-adds them into the distribution for use by L<Locale::TextDomain>. This is
-useful if your distribution maintains gettext language files in a directory,
-with each file named for a language.
+Dist::Zilla::LocaleTextDomain provides tools to scan your Perl libraries for
+[Local::TextDomain](http://metacpan.org/module/Locale::TextDomain)-style
+localizable strings, create a language template, and initialize translation
+files and keep them up-to-date. If you use
+[Local::TextDomain](http://metacpan.org/module/Locale::TextDomain) and
+[Dist::Zilla](http://dzil.org/), you need this module!
 
 Installation
 ------------
@@ -26,7 +28,8 @@ Or, if you don't have Module::Build installed, type the following:
 Dependencies
 ------------
 
-This module requires the following non-core modules:
+This module requires the the [gettext](http://www.gnu.org/software/gettext/)
+utilities. It also requires the following non-core modules:
 
 * Dist::Zilla
 * Dist::Zilla::File::FromCode:
