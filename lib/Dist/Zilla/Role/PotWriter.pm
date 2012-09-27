@@ -5,7 +5,6 @@ package Dist::Zilla::Role::PotWriter;
 use Moose::Role;
 use strict;
 use warnings;
-use Carp;
 use File::Path qw(make_path);
 use namespace::autoclean;
 
@@ -23,9 +22,10 @@ sub files_to_scan {
 
 sub write_pot {
     my ($self, %p) = @_;
-    my $pot = $p{to} or croak 'Missing required "to" parameter to write_pot()';
-    my $verb = -e $pot ? 'update' : 'create';
     my $dzil = $self->zilla;
+    my $pot  = $p{to}
+        or $dzil->log_fatal('Missing required "to" parameter to write_pot()');
+    my $verb = -e $pot ? 'update' : 'create';
 
     # Make sure the directory exists.
     make_path $pot->parent->stringify unless -d $pot->parent;
@@ -68,7 +68,7 @@ sub write_pot {
 		'--language=perl',
         '--output=' . $pot,
         @files,
-    ) == 0 or croak "Cannot $verb $pot\n";
+    ) == 0 or $dzil->log_fatal("Cannot $verb $pot");
 }
 
 requires 'zilla';
