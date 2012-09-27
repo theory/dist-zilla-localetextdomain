@@ -31,6 +31,7 @@ Dependencies
 This module requires the the [gettext](http://www.gnu.org/software/gettext/)
 utilities. It also requires the following non-core modules:
 
+* Capture::Tiny
 * Dist::Zilla
 * Dist::Zilla::File::FromCode:
 * Dist::Zilla::Role::FileGatherer:

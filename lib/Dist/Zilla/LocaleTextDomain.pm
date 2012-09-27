@@ -1,6 +1,7 @@
 # ABSTRACT: Tools for managing Locale::TextDomain language catalogs
 
 package Dist::Zilla::LocaleTextDomain;
+use v5.8.5;
 
 our $VERSION = '0.11';
 
