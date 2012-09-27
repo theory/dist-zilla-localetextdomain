@@ -43,6 +43,7 @@ sub write_pot {
         }
     } || '';
 
+    my $log = sub { $dzil->log(@_) };
     run [
         $p{xgettext} || 'xgettext' . ($^O eq 'MSWin32' ? '.exe' : ''),
         '--from-code=' . ($p{encoding} || 'UTF-8'),
@@ -69,7 +70,7 @@ sub write_pot {
 		'--language=perl',
         '--output=' . $pot,
         @files,
-    ], undef, sub { $dzil->log(@_) } or $dzil->log_fatal("Cannot $verb $pot");
+    ], undef, $log, $log, or $dzil->log_fatal("Cannot $verb $pot");
 }
 
 requires 'zilla';

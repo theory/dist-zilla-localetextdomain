@@ -126,13 +126,14 @@ sub gather_files {
         my $dest = file $shr_dir, 'LocaleData', $lang, 'LC_MESSAGES',
             "$txt_dom.$bin_ext";
         my $temp = $tmp_dir->file("$lang.$bin_ext");
+        my $log = sub { $dzil->log(@_) };
         $self->add_file(
             Dist::Zilla::File::FromCode->new({
                 name => $dest->stringify,
                 code => sub {
                     run(
                         [@cmd, $temp, $file],
-                        undef, sub { $dzil->log(@_) }
+                        undef, $log, $log
                     ) or $dzil->log_fatal("Cannot compile $file");
                     scalar $temp->slurp(iomode => '<:raw');
                 },

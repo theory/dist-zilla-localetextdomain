@@ -85,11 +85,12 @@ sub execute {
         '--backup=' . ($opt->{backup} ? 'simple' : 'none'),
     );
 
+    my $log = sub { $dzil->log(@_) };
     for my $file (@pos) {
         $self->log("Merging gettext strings into $file");
         run(
             [@cmd, $file, $pot_file],
-            undef, sub { $dzil->log(@_) }
+            undef, $log, $log
         ) or $dzil->log_fatal("Cannot merge into $file");
     }
 }

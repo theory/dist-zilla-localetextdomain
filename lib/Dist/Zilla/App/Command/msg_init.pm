@@ -95,6 +95,7 @@ sub execute {
         '--no-translator',
     );
 
+    my $log = sub { $dzil->log(@_) };
     for my $lang (@{ $args }) {
         # Strip off encoding.
         (my $name = $lang) =~ s/[.].+$//;
@@ -102,7 +103,7 @@ sub execute {
         $dzil->log_fatal("$dest already exists") if -e $dest;
         run (
             [@cmd,  "--locale=$lang", '--output-file=' . $dest],
-            undef, sub { $dzil->log(@_) }
+            undef, $log, $log
         ) or $self->log_fatal("Cannot generate $dest");
     }
 }
