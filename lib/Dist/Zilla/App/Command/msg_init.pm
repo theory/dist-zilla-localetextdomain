@@ -7,7 +7,6 @@ use strict;
 use warnings;
 use Path::Class;
 use Dist::Zilla::Plugin::LocaleTextDomain;
-use Carp;
 use Moose;
 use File::Find::Rule;
 use namespace::autoclean;
@@ -38,16 +37,18 @@ sub validate_args {
 
     require IPC::Cmd;
     my $xget = $opt->{xgettext} ||= 'xgettext' . ($^O eq 'MSWin32' ? '.exe' : '');
-    die qq{Cannot find "$xget": Are the GNU gettext utilities installed?}
-        unless IPC::Cmd::can_run($xget);
+    $self->zilla->log_fatal(
+        qq{Cannot find "$xget": Are the GNU gettext utilities installed?}
+    ) unless IPC::Cmd::can_run($xget);
 
     my $init = $opt->{msginit} ||= 'msginit' . ($^O eq 'MSWin32' ? '.exe' : '');
-    die qq{Cannot find "$init": Are the GNU gettext utilities installed?}
-        unless IPC::Cmd::can_run($init);
+    $self->zilla->log_fatal(
+        qq{Cannot find "$init": Are the GNU gettext utilities installed?}
+    ) unless IPC::Cmd::can_run($init);
 
     if (my $enc = $opt->{encoding}) {
         require Encode;
-        die qq{"$enc" is not a valid encoding\n}
+        $self->zilla->log_fatal(qq{"$enc" is not a valid encoding})
             unless Encode::find_encoding($enc);
     } else {
         $opt->{encoding} = 'UTF-8';
@@ -63,15 +64,15 @@ sub validate_args {
         my ($name, $enc) = split /[.]/, $lang, 2;
         if ($enc) {
             require Encode;
-            die qq{"$enc" is not a valid encoding\n}
+            $self->zilla->log_fatal(qq{"$enc" is not a valid encoding})
                 unless Encode::find_encoding($enc);
         }
 
         my ($lang, $country) = split /[-_]/, $name;
-        die qq{"$lang" is not a valid language code\n}
+        $self->zilla->log_fatal(qq{"$lang" is not a valid language code})
             unless Locale::Codes::Language::code2language($lang);
         if ($country) {
-            die qq{"$country" is not a valid country code\n}
+            $self->zilla->log_fatal(qq{"$country" is not a valid country code})
                 unless Locale::Codes::Country::code2country($country);
         }
     }
@@ -82,7 +83,7 @@ sub execute {
 
     my $dzil   = $self->zilla;
     my $plugin = $self->zilla->plugin_named('LocaleTextDomain')
-        or croak 'LocaleTextDomain plugin not found in dist.ini!';
+        or $dzil->log_fatal('LocaleTextDomain plugin not found in dist.ini!');
     my $lang_dir = $plugin->lang_dir;
     my $lang_ext = '.' . $plugin->lang_file_suffix;
     my $pot_file = $self->pot_file( %{ $opt } );
@@ -97,9 +98,9 @@ sub execute {
         # Strip off encoding.
         (my $name = $lang) =~ s/[.].+$//;
         my $dest = $lang_dir->file( $name . $lang_ext );
-        die "$dest already exists\n" if -e $dest;
+        $dzil->log_fatal("$dest already exists") if -e $dest;
         system(@cmd, "--locale=$lang", '--output-file=' . $dest) == 0
-            or die "Cannot generate $dest\n";
+            or $self->log_fatal("Cannot generate $dest");
     }
 }
 

@@ -7,7 +7,6 @@ use strict;
 use warnings;
 use Path::Class;
 use Dist::Zilla::Plugin::LocaleTextDomain;
-use Carp;
 use File::Basename;
 use Moose;
 use File::Copy;
@@ -41,16 +40,18 @@ sub validate_args {
 
     require IPC::Cmd;
     my $xget = $opt->{xgettext} ||= 'xgettext' . ($^O eq 'MSWin32' ? '.exe' : '');
-    die qq{Cannot find "$xget": Are the GNU gettext utilities installed?}
-        unless IPC::Cmd::can_run($xget);
+    $self->zilla->log_fatal(
+        qq{Cannot find "$xget": Are the GNU gettext utilities installed?}
+    ) unless IPC::Cmd::can_run($xget);
 
     my $merge = $opt->{msgmerge} ||= 'msgmerge' . ($^O eq 'MSWin32' ? '.exe' : '');
-    die qq{Cannot find "$merge": Are the GNU gettext utilities installed?}
-        unless IPC::Cmd::can_run($merge);
+    $self->zilla->log_fatal(
+        qq{Cannot find "$merge": Are the GNU gettext utilities installed?}
+    ) unless IPC::Cmd::can_run($merge);
 
     if (my $enc = $opt->{encoding}) {
         require Encode;
-        die qq{"$enc" is not a valid encoding\n}
+        $self->zilla->log_fatal(qq{"$enc" is not a valid encoding})
             unless Encode::find_encoding($enc);
     } else {
         $opt->{encoding} = 'UTF-8';
@@ -69,7 +70,7 @@ sub execute {
 
     my $dzil   = $self->zilla;
     my $plugin = $self->zilla->plugin_named('LocaleTextDomain')
-        or croak 'LocaleTextDomain plugin not found in dist.ini!';
+        or $dzil->log_fatal('LocaleTextDomain plugin not found in dist.ini!');
     my $lang_dir = $plugin->lang_dir;
     my $lang_ext = '.' . $plugin->lang_file_suffix;
     my $pot_file = $self->pot_file( %{ $opt } );
@@ -86,7 +87,7 @@ sub execute {
     for my $file (@pos) {
         $self->log("Merging gettext strings into $file");
         if (system(@cmd, $file, $pot_file) != 0) {
-            die "Cannot merge into $file\n";
+            $dzil->log_fatal("Cannot merge into $file");
         }
     }
 }

@@ -5,7 +5,6 @@ package Dist::Zilla::App::Command::msg_scan;
 use Dist::Zilla::App -command;
 use strict;
 use warnings;
-use Carp;
 use Moose;
 use namespace::autoclean;
 
@@ -34,12 +33,13 @@ sub validate_args {
 
     require IPC::Cmd;
     my $xget = $opt->{xgettext} ||= 'xgettext' . ($^O eq 'MSWin32' ? '.exe' : '');
-    die qq{Cannot find "$xget": Are the GNU gettext utilities installed?}
-        unless IPC::Cmd::can_run($xget);
+    $self->zilla->log_fatal(
+        qq{Cannot find "$xget": Are the GNU gettext utilities installed?}
+    ) unless IPC::Cmd::can_run($xget);
 
     if (my $enc = $opt->{encoding}) {
         require Encode;
-        die qq{"$enc" is not a valid encoding\n}
+        $self->zilla->log_fatal(qq{"$enc" is not a valid encoding})
             unless Encode::find_encoding($enc);
     } else {
         $opt->{encoding} = 'UTF-8';
@@ -52,7 +52,7 @@ sub execute {
     require Path::Class;
     my $dzil     = $self->zilla;
     my $plugin   = $self->zilla->plugin_named('LocaleTextDomain')
-        or croak 'LocaleTextDomain plugin not found in dist.ini!';
+        or $dzil->log_fatal('LocaleTextDomain plugin not found in dist.ini!');
     my $pot_file = Path::Class::file($opt->{pot_file} || (
         $plugin->lang_dir, $self->zilla->name . '.pot'
     ));

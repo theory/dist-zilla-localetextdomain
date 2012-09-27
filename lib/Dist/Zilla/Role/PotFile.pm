@@ -5,7 +5,6 @@ package Dist::Zilla::Role::PotFile;
 use Moose::Role;
 use strict;
 use warnings;
-use Carp;
 use Path::Class;
 use namespace::autoclean;
 
@@ -19,13 +18,13 @@ sub pot_file {
     my $dzil = $self->zilla;
     my $pot  = $p{pot_file};
     if ($pot) {
-        die "Template file $pot does not exist\n" unless -e $pot;
+        $dzil->log_fatal("Template file $pot does not exist") unless -e $pot;
         return $pot;
     }
 
     # Look for a template in the default location used by `msg-scan`.
     my $plugin = $self->zilla->plugin_named('LocaleTextDomain')
-            or croak 'LocaleTextDomain plugin not found in dist.ini!';
+        or $dzil->log_fatal('LocaleTextDomain plugin not found in dist.ini!');
 
     $pot = file $plugin->lang_dir, $dzil->name . '.pot';
     return $pot if -e $pot;

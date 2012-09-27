@@ -122,7 +122,7 @@ ok $result = test_dzil('t/dist', [
     '--pot-file' => $nonpot,
 ]), 'Execute with nonexistent POT file';
 isnt $result->exit_code, 1, 'Should not have exited 0';
-is $result->error, "Template file $nonpot does not exist\n",
+like $result->error, qr/^[[][^]]+[]]\s+Template file $nonpot does not exist\b/,
     'Should have got error about nonexistent POT';
 
 sub got_msg {
