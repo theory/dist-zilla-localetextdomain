@@ -33,20 +33,20 @@ utilities. It also requires the following non-core modules:
 
 * Capture::Tiny
 * Dist::Zilla
-* Dist::Zilla::File::FromCode:
-* Dist::Zilla::Role::FileGatherer:
-* Email::Address:
-* Encode:
-* File::Find::Rule:
-* IPC::Cmd:
-* Locale::Codes::Country:
-* Locale::Codes::Language:
-* Moose:
+* Dist::Zilla::File::FromCode
+* Dist::Zilla::Role::FileGatherer
+* Email::Address
+* Encode
+* File::Find::Rule
+* IPC::Cmd
+* Locale::Codes::Country
+* Locale::Codes::Language
+* Moose
 * Moose::Role:
-* Moose::Util::TypeConstraints:
-* MooseX::Types::Path::Class:
-* Path::Class:
-* namespace::autoclean:
+* Moose::Util::TypeConstraints
+* MooseX::Types::Path::Class
+* Path::Class
+* namespace::autoclean
 
 Copyright and License
 ---------------------
