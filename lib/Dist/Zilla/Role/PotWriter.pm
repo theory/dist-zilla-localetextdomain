@@ -6,7 +6,7 @@ use Moose::Role;
 use strict;
 use warnings;
 use File::Path qw(make_path);
-use IPC::Run qw(run);
+use IPC::Run3;
 use namespace::autoclean;
 
 our $VERSION = '0.11';
@@ -44,7 +44,7 @@ sub write_pot {
     } || '';
 
     my $log = sub { $dzil->log(@_) };
-    run [
+    run3 [
         $p{xgettext} || 'xgettext' . ($^O eq 'MSWin32' ? '.exe' : ''),
         '--from-code=' . ($p{encoding} || 'UTF-8'),
         '--add-comments=TRANSLATORS:',
@@ -70,7 +70,8 @@ sub write_pot {
 		'--language=perl',
         '--output=' . $pot,
         @files,
-    ], undef, $log, $log, or $dzil->log_fatal("Cannot $verb $pot");
+    ], undef, $log, $log;
+    $dzil->log_fatal("Cannot $verb $pot") if $?;
 }
 
 requires 'zilla';

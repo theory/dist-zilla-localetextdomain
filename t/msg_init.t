@@ -9,7 +9,6 @@ use Path::Class;
 use Test::File;
 use Test::File::Contents;
 use Dist::Zilla::App::Tester;
-use Capture::Tiny 'capture_stderr';
 
 $ENV{DZIL_GLOBRL_CONFIG_ROOT} = 't';
 
@@ -43,16 +42,14 @@ like $result->error, qr/Error: dzil msg-init takes one or more arguments/,
     'Should have reason for the failure in the error message';
 
 # Create a new language.
-my $out = capture_stderr {
-    ok $result = test_dzil('t/dist', [qw(msg-init ja.UTF-8)]),
-        'Init ja.UTF-8';
-};
+ok $result = test_dzil('t/dist', [qw(msg-init ja.UTF-8)]),
+    'Init ja.UTF-8';
 is $result->exit_code, 0, 'Should have exited 0';
 ok((grep {
     /extracting gettext strings/
 } @{ $result->log_messages }),  'Should have logged the POT file creation');
-
-like $out, qr/ja[.]po/, 'File name should have been emitted from msginit';
+ok((grep { /ja[.]po/} @{ $result->log_messages }),
+   'File name should have been emitted from msginit');
 
 my $po = file $result->tempdir, qw(source po ja.po);
 file_exists_ok $po, 'po/ja.po should now exist';
@@ -75,23 +72,22 @@ like $result->error, qr/po.fr[.]po already exists/,
 
 # Now specify a bunch of options.
 my $pot = file qw(po org.imperia.simplecal.pot);
-$out = capture_stderr {
-    ok $result = test_dzil('t/dist', [
-        'msg-init',
-        '--encoding'         => 'Latin-1',
-        '--pot-file'         => $pot,
-        '--copyright-holder' => 'Homer Simpson',
-        '--bugs-email'       => 'foo@bar.com',
-        'pt_BR'
-    ]), 'Init with options';
-};
+ok $result = test_dzil('t/dist', [
+    'msg-init',
+    '--encoding'         => 'Latin-1',
+    '--pot-file'         => $pot,
+    '--copyright-holder' => 'Homer Simpson',
+    '--bugs-email'       => 'foo@bar.com',
+    'pt_BR'
+]), 'Init with options';
 
 is $result->exit_code, 0, 'Should have exited 0';
 ok(!(grep {
     /extracting gettext strings/
 } @{ $result->log_messages }),  'Should not have logged the POT file creation');
 
-like $out, qr/pt_BR[.]po/, 'pt_BR name should have been emitted from msginit';
+ok((grep { /pt_BR[.]po/} @{ $result->log_messages }),
+   'pt_BR name should have been emitted from msginit');
 
 $po = file $result->tempdir, qw(source po pt_BR.po);
 file_exists_ok $po, 'po/pt_BR.po should now exist';

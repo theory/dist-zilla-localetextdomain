@@ -9,7 +9,6 @@ use Path::Class;
 use Test::File;
 use Test::File::Contents;
 use Dist::Zilla::App::Tester;
-use Capture::Tiny 'capture_stderr';
 
 $ENV{DZIL_GLOBRL_CONFIG_ROOT} = 't';
 

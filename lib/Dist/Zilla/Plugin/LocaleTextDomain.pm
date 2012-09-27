@@ -6,7 +6,7 @@ use warnings;
 use Moose;
 use Path::Class;
 use IPC::Cmd qw(can_run);
-use IPC::Run qw(run);
+use IPC::Run3;
 use MooseX::Types::Path::Class;
 use Moose::Util::TypeConstraints;
 use Dist::Zilla::File::FromCode;
@@ -126,15 +126,13 @@ sub gather_files {
         my $dest = file $shr_dir, 'LocaleData', $lang, 'LC_MESSAGES',
             "$txt_dom.$bin_ext";
         my $temp = $tmp_dir->file("$lang.$bin_ext");
-        my $log = sub { $dzil->log(@_) };
+        my $log = sub { $self->log(@_) };
         $self->add_file(
             Dist::Zilla::File::FromCode->new({
                 name => $dest->stringify,
                 code => sub {
-                    run(
-                        [@cmd, $temp, $file],
-                        undef, $log, $log
-                    ) or $dzil->log_fatal("Cannot compile $file");
+                    run3 [@cmd, $temp, $file], undef, $log, $log;
+                    $dzil->log_fatal("Cannot compile $file") if $?;
                     scalar $temp->slurp(iomode => '<:raw');
                 },
             })

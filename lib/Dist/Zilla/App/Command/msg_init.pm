@@ -8,7 +8,7 @@ use warnings;
 use Path::Class;
 use Dist::Zilla::Plugin::LocaleTextDomain;
 use Moose;
-use IPC::Run qw(run);
+use IPC::Run3;
 use File::Find::Rule;
 use namespace::autoclean;
 
@@ -101,10 +101,11 @@ sub execute {
         (my $name = $lang) =~ s/[.].+$//;
         my $dest = $lang_dir->file( $name . $lang_ext );
         $dzil->log_fatal("$dest already exists") if -e $dest;
-        run (
+        run3 (
             [@cmd,  "--locale=$lang", '--output-file=' . $dest],
             undef, $log, $log
-        ) or $self->log_fatal("Cannot generate $dest");
+        );
+        $self->log_fatal("Cannot generate $dest") if $?;
     }
 }
 
