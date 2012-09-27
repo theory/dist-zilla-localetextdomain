@@ -26,18 +26,23 @@ Or, if you don't have Module::Build installed, type the following:
 Dependencies
 ------------
 
-This module requires the following modules:
+This module requires the following non-core modules:
 
-* Capture::Tiny
-* Carp
-* Dist::Zilla::File::InMemory
-* Dist::Zilla::Role::FileGatherer
-* IPC::Cmd
-* Moose
-* Moose::Util::TypeConstraints
-* MooseX::Types::Path::Class
-* Path::Class
-* namespace::autoclean
+* Dist::Zilla
+* Dist::Zilla::File::FromCode:
+* Dist::Zilla::Role::FileGatherer:
+* Email::Address:
+* Encode:
+* File::Find::Rule:
+* IPC::Cmd:
+* Locale::Codes::Country:
+* Locale::Codes::Language:
+* Moose:
+* Moose::Role:
+* Moose::Util::TypeConstraints:
+* MooseX::Types::Path::Class:
+* Path::Class:
+* namespace::autoclean:
 
 Copyright and License
 ---------------------
