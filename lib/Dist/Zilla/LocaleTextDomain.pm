@@ -176,10 +176,11 @@ L<C<msg-init>|Dist::Zilla::App::Command::msg_init> command:
 At this point, the L<gettext|http://www.gnu.org/software/gettext/> utilities
 will need to be installed and visible in your path, or else you'll get errors.
 
-This command scans all of your Perl modules and initializes a German
-translation file, named F<po/de.po>. This file is now ready for your
-German-speaking public to start translating. Check it into your source code
-repository so they can find it. Create as many language files as you like:
+This command scans all of the Perl modules gathered by Dist::Zilla and
+initializes a German translation file, named F<po/de.po>. This file is now
+ready for your German-speaking public to start translating. Check it into your
+source code repository so they can find it. Create as many language files as
+you like:
 
   > dzil msg-init fr ja.JIS en_US.UTF-8
   Created po/fr.po.
@@ -257,7 +258,8 @@ then delete it when they're done.
 
 However, it's common to also store the template file in your repository and to
 manage it directly, rather than implicitly. If you'd like to do this, the
-L<C<msg-scan>|Dist::Zilla::App::Command::msg_scan> command will make it for you:
+L<C<msg-scan>|Dist::Zilla::App::Command::msg_scan> command will scan the Perl
+module files gathered by Dist::Zilla and make it for you:
 
   > dzil msg-scan
   gettext strings into po/My-GreatApp.pot
