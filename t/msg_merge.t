@@ -9,6 +9,15 @@ use Path::Class;
 use Test::File;
 use Test::File::Contents;
 use Dist::Zilla::App::Tester;
+use App::Cmd::Tester::CaptureExternal;
+
+BEGIN {
+    # Make Tester to inherit CaptureExternal to prevent "Bad file descriptor".
+    package Dist::Zilla::App::Tester;
+    for (@Dist::Zilla::App::Tester::ISA) {
+        $_ = 'App::Cmd::Tester::CaptureExternal' if $_ eq 'App::Cmd::Tester';
+    }
+}
 
 $ENV{DZIL_GLOBRL_CONFIG_ROOT} = 't';
 
