@@ -3,7 +3,7 @@
 package Dist::Zilla::LocaleTextDomain;
 use v5.8.5;
 
-our $VERSION = '0.80';
+our $VERSION = '0.81';
 
 1;
 
