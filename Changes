@@ -1,6 +1,6 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
-0.80
+0.80  2012-10-01T19:00:55Z
       - Switched from `system()` to IPC::Run3, so that STDOUT and STDERR
         messages can be passed to the Dist::Zilla logger.
       - Added new `dzil` commands:
