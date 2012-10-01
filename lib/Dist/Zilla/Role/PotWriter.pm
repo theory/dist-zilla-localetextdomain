@@ -9,7 +9,7 @@ use File::Path qw(make_path);
 use IPC::Run3;
 use namespace::autoclean;
 
-our $VERSION = '0.11';
+our $VERSION = '0.80';
 
 sub files_to_scan {
     my $self = shift;
