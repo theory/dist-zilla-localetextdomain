@@ -1,6 +1,8 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
 0.81
+      - Removed tests for the `add_lang` command, which was never shipped,
+        but renamed `msg_init`.
 
 0.80  2012-10-01T19:00:55Z
       - Switched from `system()` to IPC::Run3, so that STDOUT and STDERR
