@@ -1,5 +1,7 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
+0.82
+
 0.81  2012-10-02T16:25:43Z
       - Removed tests for the `add_lang` command, which was never shipped,
         but renamed `msg_init`.
