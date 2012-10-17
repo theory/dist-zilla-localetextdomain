@@ -1,6 +1,9 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
 0.82
+     - Fixed broken call to `log_fatal` in the `msg-init` command that caused
+       the actual error to be lost in favor of a bad method call error. Thanks
+       Joenio Costa for the patch.
 
 0.81  2012-10-02T16:25:43Z
       - Removed tests for the `add_lang` command, which was never shipped,
