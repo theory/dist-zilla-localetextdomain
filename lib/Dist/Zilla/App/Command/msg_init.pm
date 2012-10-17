@@ -105,7 +105,7 @@ sub execute {
             [@cmd,  "--locale=$lang", '--output-file=' . $dest],
             undef, $log, $log
         );
-        $self->log_fatal("Cannot generate $dest") if $?;
+        $dzil->log_fatal("Cannot generate $dest") if $?;
     }
 }
 
