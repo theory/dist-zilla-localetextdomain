@@ -58,8 +58,8 @@ sub validate_args {
     $self->usage_error('dzil msg-init takes one or more arguments')
         if @{ $args } < 1;
 
-    require Locale::Codes::Language;
-    require Locale::Codes::Country;
+    require Locale::Language;
+    require Locale::Country;
 
     for my $lang ( @{ $args } ) {
         my ($name, $enc) = split /[.]/, $lang, 2;
@@ -71,10 +71,10 @@ sub validate_args {
 
         my ($lang, $country) = split /[-_]/, $name;
         $self->zilla->log_fatal(qq{"$lang" is not a valid language code})
-            unless Locale::Codes::Language::code2language($lang);
+            unless Locale::Language::code2language($lang);
         if ($country) {
             $self->zilla->log_fatal(qq{"$country" is not a valid country code})
-                unless Locale::Codes::Country::code2country($country);
+                unless Locale::Country::code2country($country);
         }
     }
 }
