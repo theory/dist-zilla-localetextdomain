@@ -79,10 +79,19 @@ something like this:
 Then, in you Perl libraries, load L<Locale::TextDomain> like this:
 
   use Locale::TextDomain qw(My-GreatApp);
+  use Locale::Messages qw(bind_textdomain_filter);
+  use Encode;
+  $ENV{OUTPUT_CHARSET} = 'UTF-8';
+  bind_textdomain_filter 'My-GreatApp' => \&Encode::decode_utf8;
 
-L<Locale::TextDomain> uses this value to find localization catalogs, so
-naturally Dist::Zilla::LocaleTextDomain will use it to put those catalogs in
-the right place.
+L<Locale::TextDomain> uses the string we pass to it to find localization
+catalogs, so naturally Dist::Zilla::LocaleTextDomain will use it to put those
+catalogs in the right place. It's also a best practice to coerce
+Locale::TextDomain to return character strings, rather than bytes, by setting
+the C<$OUTPUT_CHARSET> environment variable to "UTF-8" and then binding a
+filter to decode the resulting strings into Perl character strings. This makes
+it easier to work with such strings in our application. Just be sure to encode
+them before outputting them!
 
 Okay, so it's loaded, how do you use it? The documentation of the
 L<Locale::TextDomain exported functions|Locale::TextDomain/EXPORTED FUNCTIONS>
