@@ -19,7 +19,7 @@ BEGIN {
     }
 }
 
-$ENV{DZIL_GLOBRL_CONFIG_ROOT} = 't';
+$ENV{DZIL_GLOBAL_CONFIG_ROOT} = 't';
 
 my $ext = $^O eq 'MSWin32' ? '.exe' : '';
 plan skip_all => 'msginit not found' unless can_run 'msginit' . $ext;
