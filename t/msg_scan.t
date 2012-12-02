@@ -5,6 +5,7 @@ use warnings;
 use Test::More 0.90;
 use Test::DZil;
 use IPC::Cmd 'can_run';
+use IPC::Run3;
 use Path::Class;
 use Test::File;
 use Test::File::Contents;
@@ -22,6 +23,9 @@ BEGIN {
 $ENV{DZIL_GLOBAL_CONFIG_ROOT} = 't';
 
 plan skip_all => 'xgettext not found' unless can_run 'xgettext';
+my $out = '';
+eval { run3 ['xgettext', '--version'], undef, \$out, \$out };
+plan skip_all => 'xggettext too old' if $@ || $?;
 
 require_ok 'Dist::Zilla::App::Command::msg_scan';
 
