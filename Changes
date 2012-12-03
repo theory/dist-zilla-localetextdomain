@@ -9,6 +9,8 @@ Revision history for Perl extension Dist-Zilla-LocaleTextDomain
      - Fixed failing tets by skipping them when the installed versions of
        `xgettext` or `msgfmt` are too old (currently determined if they do not
        recognoze the `--version` option).
+     - Now try to detect a compatible `gettext` in the path while building,
+       and refuse to install if one cannot be found.
 
 0.81  2012-10-02T16:25:43Z
       - Removed tests for the `add_lang` command, which was never shipped,
