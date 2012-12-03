@@ -5,12 +5,8 @@ use warnings;
 use Test::More 0.90;
 use Test::DZil;
 use IPC::Cmd 'can_run';
-use IPC::Run3;
 
 plan skip_all => 'msgfmt not found' unless can_run 'msgfmt';
-my $out = '';
-eval { run3 ['msgfmt', '--version'], undef, \$out, \$out };
-plan skip_all => 'xggettext too old' if $@ || $?;
 
 sub tzil {
     Builder->from_config(
