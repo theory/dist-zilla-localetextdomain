@@ -17,3 +17,4 @@ parseable
 Perlers
 colour
 workover
+UTF
