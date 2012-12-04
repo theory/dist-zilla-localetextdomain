@@ -12,7 +12,7 @@ use IPC::Run3;
 use File::Find::Rule;
 use namespace::autoclean;
 
-our $VERSION = '0.83';
+our $VERSION = '0.84';
 
 with 'Dist::Zilla::Role::PotFile';
 
