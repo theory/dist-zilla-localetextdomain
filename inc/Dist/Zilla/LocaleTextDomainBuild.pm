@@ -7,8 +7,16 @@ use base 'Module::Build';
 
 sub new {
     my $self = shift->SUPER::new(@_);
-    die "Cannot find compatible GNU gettext in PATH\n"
-        unless $self->_backticks(qw(gettext --version));
+    my $gettext = 'gettext' . ($^O eq 'MSWin32' ? '.exe' : '');
+    my $version = $self->_backticks($gettext, '--version');
+    if (!$version || $version =~ /--version/) {
+        print STDERR '#' x 64, "\n",
+        "# Cannot find compatible GNU gettext in PATH; Download it from:\n",
+        "#     http://www.gnu.org/software/gettext/gettext.html\n",
+        "# Aborting build.\n",
+        '#' x 64, "\n\n";
+        exit 255;
+    }
     return $self;
 }
 

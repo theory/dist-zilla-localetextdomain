@@ -1,6 +1,9 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
 0.83
+     - Added improved failure message when GNU gettext cannot be found, as
+       well as slightly improved detection of the fact that it's not
+       installed. Thanks to Jeff Lavallee for the box to test it on.
 
 0.82  2012-12-03T19:06:03Z
      - Fixed broken call to `log_fatal` in the `msg-init` command that caused
