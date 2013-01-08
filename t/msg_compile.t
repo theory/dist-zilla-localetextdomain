@@ -47,7 +47,9 @@ for my $lang (qw(de fr)) {
 }
 
 # Try creating just one language.
-$result = test_dzil('t/dist', [qw(msg-compile fr)]);
+my $de = file qw(po de.po);
+my $fr = file qw(po fr.po);
+$result = test_dzil('t/dist', [qw(msg-compile), $fr]);
 is $result->exit_code, 0, '"msg-compile fr" should have exited 0';
 is @{ $result->log_messages }, 1, 'Should have only one log message';
 like $result->log_messages->[0], qr/(?:po.fr[.]po: )?19/m,

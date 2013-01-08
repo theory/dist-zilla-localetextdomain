@@ -41,6 +41,13 @@ sub validate_args {
     }
 }
 
+sub _po_files {
+    my ( $self, $plugin ) = @_;
+    require File::Find::Rule;
+    my $lang_ext = $plugin->lang_file_suffix;
+    return File::Find::Rule->file->name("*.$lang_ext")->in($plugin->lang_dir);
+}
+
 sub execute {
     my ($self, $opt, $args) = @_;
 
@@ -62,10 +69,14 @@ sub execute {
         '--output-file',
     );
 
+    my @pos = @{ $args } ? @{ $args } : $self->_po_files( $plugin );
+    $plugin->log_fatal("No language catalog files found") unless @pos;
+
     make_path $dest_dir->stringify;
 
-    for my $lang (@{ $args } ? @{ $args } : @{ $plugin->language }) {
-        my $file = $lang_dir->file("$lang.$lang_ext");
+    for my $file (@pos) {
+        $file = file $file;
+        ( my $lang = $file->basename ) =~ s{[.][^.]*$}{};
         my $dest = file $dest_dir, 'LocaleData', $lang, 'LC_MESSAGES',
             "$txt_dom.$bin_ext";
         make_path $dest->dir->stringify;
@@ -90,7 +101,7 @@ In F<dist.ini>:
 
 On the command line:
 
-  dzil msg-compile fr
+  dzil msg-compile po/fr.po
 
 =head1 Description
 
@@ -99,8 +110,8 @@ L<GNU gettext|http://www.gnu.org/software/gettext/>-style language catalogs
 into a directory in your distribution. The idea is to be able to easily
 compile a catalog while working on it, to see how it works, without having to
 compile the entire distribution. It can either compile the specified
-languages, or will scan the language directory to compile all the language
-catalogs in the distribution. It relies on the settings from the
+translation files, or will scan the language directory to compile all the
+translation files in the distribution. It relies on the settings from the
 L<C<LocaleTextDomain> plugin|Dist::Zilla::Plugin::LocaleTextDomain> for its
 settings, and requires that the GNU gettext utilities be available.
 
