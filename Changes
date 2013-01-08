@@ -1,5 +1,7 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
+0.86
+
 0.85  2013-01-08T23:07:42Z
      - Changed `msg-compile` to take a list of file names, rather than
        language codes. This brings it in line with the interface of
