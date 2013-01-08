@@ -20,7 +20,7 @@ sub command_names { qw(msg-init) }
 
 sub abstract { 'add language translation files to a distribution' }
 
-sub usage_desc { '%c %o <language_code> [<langauge_code> ...]' }
+sub usage_desc { '%c %o <language_code> [<language_code> ...]' }
 
 sub opt_spec {
     return (

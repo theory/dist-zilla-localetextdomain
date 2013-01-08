@@ -1,6 +1,6 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
-0.84  2013-01-08T20:21:5Z7
+0.84  2013-01-08T20:24:42Z
      - Changed some logging output to be prefixed with `[LocalTextDomain]`
        rather than `[DZ]`.
      - Added the `msg-compile` command, which allows one to arbitrarily

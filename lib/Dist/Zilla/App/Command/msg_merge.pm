@@ -22,7 +22,7 @@ sub command_names { qw(msg-merge) }
 
 sub abstract { 'merge localization strings into translation catalogs' }
 
-sub usage_desc { '%c %o <language_code> [<langauge_code> ...]' }
+sub usage_desc { '%c %o <language_code> [<language_code> ...]' }
 
 sub opt_spec {
     return (

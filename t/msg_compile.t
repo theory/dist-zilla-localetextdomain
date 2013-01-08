@@ -23,7 +23,7 @@ is Dist::Zilla::App::Command::msg_compile->abstract,
     'Should have correct abstract';
 
 is Dist::Zilla::App::Command::msg_compile->usage_desc,
-    '%c %o [<langauge_code> ...]',
+    '%c %o [<language_code> ...]',
     'Should have correct usage description';
 
 is_deeply [Dist::Zilla::App::Command::msg_compile->opt_spec], [

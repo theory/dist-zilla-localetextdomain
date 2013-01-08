@@ -1,6 +1,6 @@
 package Dist::Zilla::App::Command::msg_compile;
 
-# ABSTRACT: Compile langauge translation files
+# ABSTRACT: Compile language translation files
 
 use Dist::Zilla::App -command;
 use strict;
@@ -17,7 +17,7 @@ sub command_names { qw(msg-compile) }
 
 sub abstract { 'compile language translation files' }
 
-sub usage_desc { '%c %o [<langauge_code> ...]' }
+sub usage_desc { '%c %o [<language_code> ...]' }
 
 sub opt_spec {
     return (
@@ -78,7 +78,7 @@ __END__
 
 =head1 Name
 
-Dist::Zilla::App::Command::msg_compile - Compile langauge translation files
+Dist::Zilla::App::Command::msg_compile - Compile language translation files
 
 =head1 Synopsis
 
@@ -99,7 +99,7 @@ L<GNU gettext|http://www.gnu.org/software/gettext/>-style language catalogs
 into a directory in your distribution. The idea is to be able to easily
 compile a catalog while working on it, to see how it works, without having to
 compile the entire distribution. It can either compile the specified
-languages, or will scan the language directory to compile all the langauge
+languages, or will scan the language directory to compile all the language
 catalogs in the distribution. It relies on the settings from the
 L<C<LocaleTextDomain> plugin|Dist::Zilla::Plugin::LocaleTextDomain> for its
 settings, and requires that the GNU gettext utilities be available.
