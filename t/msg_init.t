@@ -30,7 +30,7 @@ is_deeply [Dist::Zilla::App::Command::msg_init->command_names],
     ['msg-init'], 'Should have correct message name';
 is Dist::Zilla::App::Command::msg_init->abstract,
     'add language translation files to a distribution',
-    'Should have correct abstrat';
+    'Should have correct abstract';
 is Dist::Zilla::App::Command::msg_init->usage_desc,
     '%c %o <language_code> [<langauge_code> ...]',
     'Should have correct usage description';

@@ -15,9 +15,9 @@ our $VERSION = '0.84';
 
 sub command_names { qw(msg-compile) }
 
-sub abstract { 'compmile language translation files' }
+sub abstract { 'compile language translation files' }
 
-sub usage_desc { '%c %o <language_code> [<langauge_code> ...]' }
+sub usage_desc { '%c %o [<langauge_code> ...]' }
 
 sub opt_spec {
     return (
@@ -32,14 +32,14 @@ sub validate_args {
 
     if ( my $msgfmt = $opt->{msgfmt} ) {
         require IPC::Cmd;
-        $self->log_fatal(
+        $self->zilla->log_fatal(
             qq{Cannot find "$msgfmt": Are the GNU gettext utilities installed?}
         ) unless IPC::Cmd::can_run($msgfmt);
     }
 
     if ( my $dir = $opt->{lang_dir} ) {
-        $self->log_fatal(qq{Directory "$dir" does not exist}) unless -e $dir;
-        $self->log_fatal(qq{"$dir" is not a directory}) unless -d $dir;
+        $self->zilla->log_fatal(qq{Directory "$dir" does not exist}) unless -e $dir;
+        $self->zilla->log_fatal(qq{"$dir" is not a directory}) unless -d $dir;
         $opt->{lang_dir} = dir $dir;
     }
 
@@ -50,6 +50,7 @@ sub validate_args {
 
 sub execute {
     my ($self, $opt, $args) = @_;
+
     my $plugin = $self->zilla->plugin_named('LocaleTextDomain')
         or $self->zilla->log_fatal('LocaleTextDomain plugin not found in dist.ini!');
 
@@ -70,7 +71,7 @@ sub execute {
 
     make_path $dest_dir->stringify;
 
-    for my $lang (@{ $args } ? $args : @{ $plugin->language }) {
+    for my $lang (@{ $args } ? @{ $args } : @{ $plugin->language }) {
         my $file = $lang_dir->file("$lang.$lang_ext");
         my $dest = file $dest_dir, 'LocaleData', $lang, 'LC_MESSAGES',
             "$txt_dom.$bin_ext";

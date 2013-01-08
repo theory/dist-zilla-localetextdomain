@@ -30,7 +30,7 @@ is_deeply [Dist::Zilla::App::Command::msg_merge->command_names],
     ['msg-merge'], 'Should have correct message name';
 is Dist::Zilla::App::Command::msg_merge->abstract,
     'merge localization strings into translation catalogs',
-    'Should have correct abstrat';
+    'Should have correct abstract';
 is Dist::Zilla::App::Command::msg_merge->usage_desc,
     '%c %o <language_code> [<langauge_code> ...]',
     'Should have correct usage description';
