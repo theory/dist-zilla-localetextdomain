@@ -1,6 +1,6 @@
 package Dist::Zilla::Role::PotFile;
 
-# ABSTRACT: Something finds or creates a gettext language translation template file
+# ABSTRACT: Something that finds or creates a gettext language translation template file
 
 use Moose::Role;
 use strict;
@@ -49,7 +49,7 @@ __END__
 
 =head1 Name
 
-Dist::Zilla::Plugin::PotFile - Something finds or creates a gettext language translation template file
+Dist::Zilla::Plugin::PotFile - Something that finds or creates a gettext language translation template file
 
 =head1 Synopsis
 
