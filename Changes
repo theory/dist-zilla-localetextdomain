@@ -1,6 +1,8 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
 0.84
+     - Changed some logging output to be prefixed with `[LocalTextDomain]`
+       rather than `[DZ]`.
 
 0.83  2012-12-04T23:54:12Z
      - Added improved failure message when GNU gettext cannot be found, as

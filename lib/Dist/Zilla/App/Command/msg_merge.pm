@@ -77,7 +77,7 @@ sub execute {
     my $pot_file = $self->pot_file( %{ $opt } );
 
     my @pos = @{ $args } ? @{ $args } : $self->_po_files( $plugin );
-    $dzil->log_fatal("No langugage catalog files found") unless @pos;
+    $plugin->log_fatal("No language catalog files found") unless @pos;
 
     my @cmd = (
         $opt->{msgmerge},
@@ -85,11 +85,11 @@ sub execute {
         '--backup=' . ($opt->{backup} ? 'simple' : 'none'),
     );
 
-    my $log = sub { $dzil->log(@_) };
+    my $log = sub { $plugin->log(@_) };
     for my $file (@pos) {
-        $self->log("Merging gettext strings into $file");
+        $plugin->log("Merging gettext strings into $file");
         run3 [@cmd, $file, $pot_file], undef, $log, $log;
-        $dzil->log_fatal("Cannot merge into $file") if $?;
+        $plugin->log_fatal("Cannot merge into $file") if $?;
     }
 }
 

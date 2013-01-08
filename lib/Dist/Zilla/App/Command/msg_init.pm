@@ -95,17 +95,17 @@ sub execute {
         '--no-translator',
     );
 
-    my $log = sub { $dzil->log(@_) };
+    my $log = sub { $plugin->log(@_) };
     for my $lang (@{ $args }) {
         # Strip off encoding.
         (my $name = $lang) =~ s/[.].+$//;
         my $dest = $lang_dir->file( $name . $lang_ext );
-        $dzil->log_fatal("$dest already exists") if -e $dest;
+        $plugin->log_fatal("$dest already exists") if -e $dest;
         run3 (
             [@cmd,  "--locale=$lang", '--output-file=' . $dest],
             undef, $log, $log
         );
-        $dzil->log_fatal("Cannot generate $dest") if $?;
+        $plugin->log_fatal("Cannot generate $dest") if $?;
     }
 }
 

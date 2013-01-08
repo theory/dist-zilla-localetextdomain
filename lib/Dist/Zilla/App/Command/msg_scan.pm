@@ -57,7 +57,7 @@ sub execute {
         $plugin->lang_dir, $self->zilla->name . '.pot'
     ));
 
-    $self->log("extracting gettext strings into $pot_file");
+    $plugin->log("extracting gettext strings into $pot_file");
     $self->write_pot(
         to               => $pot_file,
         xgettext         => $opt->{xgettext},
