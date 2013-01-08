@@ -51,7 +51,7 @@ utilities. It also requires the following non-core modules:
 Copyright and License
 ---------------------
 
-This software is copyright (c) 2012 by David E. Wheeler.
+This software is copyright (c) 2012-2013 by David E. Wheeler.
 
 This is free software; you can redistribute it and/or modify it under the same
 terms as the Perl 5 programming language system itself.
