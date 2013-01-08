@@ -14,13 +14,6 @@ sub tzil {
         {
             add_files => {
                 'source/dist.ini' => simple_ini(
-                    # By default, source/dist.ini inherits the parent module's dist.ini.
-                    # This hashref can override them, if desired.
-                    {
-                        # author => "Some Other Author",
-                    },
-                    # Subsequent arguments define imported plugins:
-                    # [GatherDir]
                     'GatherDir',
                     ['LocaleTextDomain', @_],
                 ),
