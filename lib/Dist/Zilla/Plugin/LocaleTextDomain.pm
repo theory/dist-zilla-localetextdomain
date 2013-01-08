@@ -6,13 +6,14 @@ use warnings;
 use Moose;
 use Path::Class;
 use IPC::Cmd qw(can_run);
+use IPC::Run3;
 use MooseX::Types::Path::Class;
 use Moose::Util::TypeConstraints;
 use Dist::Zilla::File::FromCode;
+use File::Path 2.07 qw(make_path remove_tree);
 use namespace::autoclean;
 
 with 'Dist::Zilla::Role::FileGatherer';
-with 'Dist::Zilla::Role::MsgCompile';
 
 our $VERSION = '0.84';
 
@@ -42,6 +43,15 @@ has share_dir => (
     isa     => 'Path::Class::Dir',
     coerce  => 1,
     default => sub { dir 'share' },
+);
+
+has _tmp_dir => (
+    is      => 'ro',
+    isa     => 'Path::Class::Dir',
+    default => sub {
+        require File::Temp;
+        dir File::Temp::tempdir(CLEANUP => 1);
+    },
 );
 
 has msgfmt => (
@@ -84,8 +94,22 @@ sub mvp_multivalue_args { return qw(language) }
 
 sub gather_files {
     my ($self, $arg) = @_;
+
     my $dzil     = $self->zilla;
     my $lang_dir = $self->lang_dir;
+    my $lang_ext = $self->lang_file_suffix;
+    my $bin_ext  = $self->bin_file_suffix;
+    my $txt_dom  = $self->textdomain;
+    my $shr_dir  = $self->share_dir;
+    my $tmp_dir  = $self->_tmp_dir;
+
+    my @cmd = (
+        $self->msgfmt,
+        '--check',
+        '--statistics',
+        '--verbose',
+        '--output-file',
+    );
 
     unless (-d $lang_dir) {
         $self->log(
@@ -94,10 +118,26 @@ sub gather_files {
         return;
     }
 
-    $self->msg_compile(
-        lang_dir => $lang_dir,
-        dest_dir => $self->share_dir,
-    );
+    $self->log("Compiling language files in $lang_dir");
+    make_path $tmp_dir->stringify;
+
+    for my $lang (@{ $self->language }) {
+        my $file = $lang_dir->file("$lang.$lang_ext");
+        my $dest = file $shr_dir, 'LocaleData', $lang, 'LC_MESSAGES',
+            "$txt_dom.$bin_ext";
+        my $temp = $tmp_dir->file("$lang.$bin_ext");
+        my $log = sub { $self->log(@_) };
+        $self->add_file(
+            Dist::Zilla::File::FromCode->new({
+                name => $dest->stringify,
+                code => sub {
+                    run3 [@cmd, $temp, $file], undef, $log, $log;
+                    $dzil->log_fatal("Cannot compile $file") if $?;
+                    scalar $temp->slurp(iomode => '<:raw');
+                },
+            })
+        );
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
