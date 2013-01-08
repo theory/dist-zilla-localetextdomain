@@ -35,6 +35,10 @@ Merge changes to localizable messages into existing translation files:
 
   dzil msg-merge
 
+Compile translation files into message catalogs for testing:
+
+  dzil msg-compile --dest-dir . fr de.UTF-8
+
 Binary message catalogs are automatically added to your distribution by the
 C<build> and C<release> commands:
 
@@ -62,8 +66,8 @@ for my distribution was harder, so I decided to write
 Dist::Zilla::LocaleTextDomain to make life simpler for developers who manage
 their distributions with L<Dist::Zilla>.
 
-What follows is a quick tutorial on using L<Locale::TextDomain> in your code
-and managing it with Dist::Zilla::LocaleTextDomain.
+What follows is a quick tutorial on using L<Locale::TextDomain> and managing
+its translation files with Dist::Zilla::LocaleTextDomain.
 
 =head1 This is my domain
 
@@ -166,8 +170,8 @@ you use L<Module::Build>, you will also need a subclass to do the right thing
 with the catalog files; see
 L<Dist::Zilla::Plugin::LocaleTextDomain/Installation> for details.)>
 
-What does this do including the plugin do? Mostly nothing. You might see this
-line from C<dzil build>, though:
+What does including the plugin do? Mostly nothing. You might see this line
+from C<dzil build>, though:
 
   [LocaleTextDomain] Skipping language compilation: directory po does not exist
 
@@ -231,6 +235,46 @@ This prevents the F<po> directory and its contents from being included in the
 distribution. Sure, you can include them if you like, but they're not required
 for the running of your app; the generated binary catalog files are all you
 need. Might as well leave out the translation files.
+
+=head2 But I'm a Translator
+
+Not a developer, but want to translate a project? I've written this special
+section just for you.
+
+Translating your language is relatively straight-forward. First, make sure
+that the translation file is up-to-date. Say you're translating into French;
+use the L<C<msg-merge>|Dist::Zilla::App::Command::msg_merge> command to update
+the translation file:
+
+  > dzil msg-merge po/fr.po
+  [LocaleTextDomain] Merging gettext strings into po/fr.po
+
+If you get an error about it not existing, use the
+L<C<msg-init>|Dist::Zilla::App::Command::msg_init> command to create it:
+
+  > dzil msg-init fr
+  [LocaleTextDomain] Created po/fr.po.
+
+Now edit F<po/fr.po>. You can use a tool such as L<Poedit|http://www.poedit.net>
+or C<Emacs|https://www.gnu.org/software/gettext/manual/html_node/PO-Mode.html>
+to make it easier. As you work, you can use the
+L<C<msg-compile>|Dist::Zilla::App::Command::msg_compile> command to make sure
+that you're translation file is error-free:
+
+  > dzil msg-compile po/fr.po
+  [LocaleTextDomain] po/fr.po: 195 translated messages.
+
+This command compiles a catalog file into the F<LocaleData> subdirectory of
+the current directory (or directory of your choice via the C<--dest-dir>
+option), so that you can even run the app with the compiled catalog to make
+sure things look the way you think they ought to. Just set the C<$LANGUAGE>
+environment variable and make sure that Perl includes the current directory in
+its path, something like:
+
+  LANGUAGE=fr perl -I . bin/myapp.pl
+
+Consult the developer for help with this bit, as how apps run varies between
+projects.
 
 =head2 Mergers and acquisitions
 

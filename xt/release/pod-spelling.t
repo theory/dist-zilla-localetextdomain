@@ -18,3 +18,5 @@ Perlers
 colour
 workover
 UTF
+subdirectory
+Poedit
