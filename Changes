@@ -1,5 +1,7 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
+0.85
+
 0.84  2013-01-08T20:24:42Z
      - Changed some logging output to be prefixed with `[LocalTextDomain]`
        rather than `[DZ]`.
