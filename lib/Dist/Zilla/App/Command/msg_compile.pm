@@ -7,12 +7,11 @@ use strict;
 use warnings;
 use Path::Class;
 use Dist::Zilla::Plugin::LocaleTextDomain;
-use Moose;
+use IPC::Run3;
+use File::Path 2.07 qw(make_path);
 use namespace::autoclean;
 
 our $VERSION = '0.84';
-
-with 'Dist::Zilla::Role::MsgCompile';
 
 sub command_names { qw(msg-compile) }
 
@@ -24,7 +23,7 @@ sub opt_spec {
     return (
         [ 'lang-dir|l=s' => 'location in which to find translation files' ],
         [ 'dest-dir|d=s' => 'location in which to save complied files'    ],
-        [ 'msgfmt|m=s'   => 'location of msgfmt utility'                   ],
+        [ 'msgfmt|m=s'   => 'location of msgfmt utility'                  ],
     );
 }
 
@@ -43,6 +42,10 @@ sub validate_args {
         $self->log_fatal(qq{"$dir" is not a directory}) unless -d $dir;
         $opt->{lang_dir} = dir $dir;
     }
+
+    if ( my $dir = $opt->{dest_dir} ) {
+        $opt->{dest_dir} = dir $dir;
+    }
 }
 
 sub execute {
@@ -50,15 +53,33 @@ sub execute {
     my $plugin = $self->zilla->plugin_named('LocaleTextDomain')
         or $self->zilla->log_fatal('LocaleTextDomain plugin not found in dist.ini!');
 
-    $self->msg_compile(
-        msgfmt    => $opt->{msgfmt},
-        languages => $args,
-        lang_dir  => $opt->{lang_dir} || $plugin->lang_dir,
-        dest_dir  => $opt->{dest_dir} || dir 'LocaleData',
+    my $lang_dir = $opt->{lang_dir} || $plugin->lang_dir;
+    my $dest_dir = $opt->{dest_dir} || dir;
+    my $lang_ext = $plugin->lang_file_suffix;
+    my $bin_ext  = $plugin->bin_file_suffix;
+    my $txt_dom  = $plugin->textdomain;
+    my $log      = sub { $plugin->log(@_) };
+
+    my @cmd = (
+        $opt->{msgfmt} || $plugin->msgfmt,
+        '--check',
+        '--statistics',
+        '--verbose',
+        '--output-file',
     );
+
+    make_path $dest_dir->stringify;
+
+    for my $lang (@{ $args } ? $args : @{ $plugin->language }) {
+        my $file = $lang_dir->file("$lang.$lang_ext");
+        my $dest = file $dest_dir, 'LocaleData', $lang, 'LC_MESSAGES',
+            "$txt_dom.$bin_ext";
+        make_path $dest->dir->stringify;
+        run3 [@cmd, $dest, $file], undef, $log, $log;
+        $plugin->log_fatal("Cannot compile $file") if $?;
+    }
 }
 
-1;
 __END__
 
 =head1 Name
