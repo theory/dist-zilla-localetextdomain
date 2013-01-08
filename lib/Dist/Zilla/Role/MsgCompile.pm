@@ -37,7 +37,7 @@ sub msg_compile {
     my $tmp_dir  = $self->_tmp_dir;
 
     my @cmd = (
-        $plugin->msgfmt,
+        $p{msgfmt} || $plugin->msgfmt,
         '--check',
         '--statistics',
         '--verbose',
@@ -47,7 +47,7 @@ sub msg_compile {
     $plugin->log("Compiling language files in $lang_dir");
     make_path $tmp_dir->stringify;
 
-    for my $lang (@{ $plugin->language }) {
+    for my $lang (@{ $p{languages} || [] } || @{ $plugin->language }) {
         my $file = $lang_dir->file("$lang.$lang_ext");
         my $dest = file $dest_dir, 'LocaleData', $lang, 'LC_MESSAGES',
             "$txt_dom.$bin_ext";
@@ -103,11 +103,21 @@ Finds and compiles GNU gettext language files. The supported parameters are:
 =item C<lang_dir>
 
 A L<Path::Class::Dir> object representing the directory in which to find the
-translation files.
+translation files. Defaults to the directory specified for the plugin.
 
 =item C<dest_dir>
 
 The destination directory into which to save the compiled translation files.
+Defaults to F<./LocaleData>.
+
+=item C<langauges>
+
+List of language codes for languages to compile. Compiles all translation
+files in C<lang_dir> by default.
+
+=item C<msgfmt>
+
+Path to the C<msgfmt> utility. Defaults to that specfied for the plugin.
 
 =back
 

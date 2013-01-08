@@ -6,11 +6,9 @@ use warnings;
 use Moose;
 use Path::Class;
 use IPC::Cmd qw(can_run);
-use IPC::Run3;
 use MooseX::Types::Path::Class;
 use Moose::Util::TypeConstraints;
 use Dist::Zilla::File::FromCode;
-use File::Path 2.07 qw(make_path remove_tree);
 use namespace::autoclean;
 
 with 'Dist::Zilla::Role::FileGatherer';
