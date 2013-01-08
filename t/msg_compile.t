@@ -27,7 +27,6 @@ is Dist::Zilla::App::Command::msg_compile->usage_desc,
     'Should have correct usage description';
 
 is_deeply [Dist::Zilla::App::Command::msg_compile->opt_spec], [
-    [ 'lang-dir|l=s' => 'location in which to find translation files' ],
     [ 'dest-dir|d=s' => 'location in which to save complied files'    ],
     [ 'msgfmt|m=s'   => 'location of msgfmt utility'                  ],
 ], 'Option spec should be correct';
@@ -62,8 +61,8 @@ $mo = file $result->tempdir,
     qw(source LocaleData de LC_MESSAGES DZT-Sample.mo);
 file_not_exists_ok $mo, 'de .mo file should not exist';
 
-# Make sure it works when we spedify directories.
-$result = test_dzil('t/dist', [qw(msg-compile --lang-dir po --dest-dir foo)]);
+# Make sure it works when we specify the optoins.
+$result = test_dzil('t/dist', [qw(msg-compile --dest-dir foo --msgfmt), 'msgfmt' . $ext]);
 is $result->exit_code, 0, '"msg-compile" with options sould have exited 0';
 
 $i = 0;
@@ -78,18 +77,5 @@ for my $lang (qw(de fr)) {
         "Compiled $lang .mo should have language content";
 }
 
-# Fail on nonexistent lang dir.
-$result = test_dzil('t/dist', [qw(msg-compile --lang-dir nonexistent)]);
-is $result->exit_code, -1,
-    '"msg-compile" nonexistent --lang-dir sould have exited -1';
-like $result->error, qr/Directory "nonexistent" does not exist/,
-    'The nonexistent lang dir error message shoud be correct';
-
-# Fail on invalid lang dir.
-$result = test_dzil('t/dist', [qw(msg-compile --lang-dir dist.ini)]);
-is $result->exit_code, -1,
-    '"msg-compile" invalid --lang-dir sould have exited -1';
-like $result->error, qr/"dist[.]ini" is not a directory/,
-    'The invalid lang dir error message shoud be correct';
 
 done_testing;
