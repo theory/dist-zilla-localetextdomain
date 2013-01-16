@@ -2,13 +2,13 @@
 
 use strict;
 use warnings;
-use Test::More tests => 11;
+use Test::More tests => 14;
 
 require_ok 'Dist::Zilla::Plugin::LocaleTextDomain';
 is_deeply [Dist::Zilla::Plugin::LocaleTextDomain->mvp_multivalue_args],
     [qw(language)], 'Should have mvp_multivalue_args';
 
-for my $cmd (qw(msg_init msg_scan msg_merge)) {
+for my $cmd (qw(msg_init msg_scan msg_merge msg_compile)) {
     my $module = "Dist::Zilla::App::Command::$cmd";
     require_ok $module;
     isa_ok $module => 'App::Cmd::Command';
