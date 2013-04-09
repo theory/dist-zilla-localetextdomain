@@ -1,6 +1,8 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
 0.86
+     - Added diagnostic output to some tests to help figure out why they fail
+       on some platforms.
 
 0.85  2013-01-08T23:07:42Z
      - Changed `msg-compile` to take a list of file names, rather than

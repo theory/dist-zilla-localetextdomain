@@ -53,7 +53,7 @@ like $result->error, qr/Error: dzil msg-init takes one or more arguments/,
 # Create a new language.
 ok $result = test_dzil('t/dist', [qw(msg-init ja.UTF-8)]),
     'Init ja.UTF-8';
-is $result->exit_code, 0, 'Should have exited 0';
+is $result->exit_code, 0, 'Should have exited 0' or diag @{ $result->log_messages };
 ok((grep {
     /extracting gettext strings/
 } @{ $result->log_messages }),  'Should have logged the POT file creation');
@@ -75,7 +75,7 @@ file_contents_like $po,
 
 # Try creating an existing language.
 ok $result = test_dzil('t/dist', [qw(msg-init fr)]), 'Init existing lang';
-isnt $result->exit_code, 0, 'Should not have exited 0';
+isnt $result->exit_code, 0, 'Should not have exited 0' or diag @{ $result->log_messages };
 like $result->error, qr/po.fr[.]po already exists/,
     'Should get error trying to create existing language';
 
@@ -90,7 +90,7 @@ ok $result = test_dzil('t/dist', [
     'pt_BR'
 ]), 'Init with options';
 
-is $result->exit_code, 0, 'Should have exited 0';
+is $result->exit_code, 0, 'Should have exited 0' or diag @{ $result->log_messages };
 ok(!(grep {
     /extracting gettext strings/
 } @{ $result->log_messages }),  'Should not have logged the POT file creation');
@@ -112,7 +112,7 @@ file_contents_like $po, qr/^\Qmsgid "February"\E$/m,
 # Now point to an invalid POT file.
 ok $result = test_dzil('t/dist', [qw(msg-init ja --pot-file nonesuch.pot)]),
     'Init with nonexistent pot file';
-isnt $result->exit_code, 0, 'Should not have exited 0';
+isnt $result->exit_code, 0, 'Should not have exited 0' or diag @{ $result->log_messages };
 like $result->error,
     qr/\QTemplate file nonesuch.pot does not exist/,
     'Should get error trying to use nonexistent POT file';

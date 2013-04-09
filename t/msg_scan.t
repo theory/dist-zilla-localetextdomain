@@ -26,7 +26,7 @@ plan skip_all => 'xgettext not found' unless can_run 'xgettext';
 require_ok 'Dist::Zilla::App::Command::msg_scan';
 
 my $result = test_dzil('t/dist', [qw(msg-scan)]);
-is($result->exit_code, 0, "dzil would have exited 0");
+is $result->exit_code, 0, "dzil would have exited 0" or diag @{ $result->log_messages };
 
 ok((grep {
     /extracting gettext strings into po.DZT-Sample[.]pot/
@@ -55,7 +55,7 @@ $result = test_dzil('t/dist', [qw(
     --bugs-email homer@example.com
     --copyright-holder
 ), 'Homer Simpson']);
-is($result->exit_code, 0, "dzil would have exited 0 again");
+is $result->exit_code, 0, "dzil would have exited 0 again" or diag @{ $result->log_messages };
 
 ok((grep {
     /extracting gettext strings into my[.]pot/

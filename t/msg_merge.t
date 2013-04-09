@@ -47,7 +47,7 @@ is_deeply [Dist::Zilla::App::Command::msg_merge->opt_spec], [
 # Start with no file specified.
 ok my $result = test_dzil('t/dist', [qw(msg-merge)]),
     'Call msg-merge with no arg';
-is $result->exit_code, 0, 'Should have exited 0';
+is $result->exit_code, 0, 'Should have exited 0' or diag @{ $result->log_messages };
 ok got_msg(qr/extracting gettext strings/),
     'Should have logged the POT file creation';
 
@@ -69,7 +69,7 @@ my $de = file qw(po de.po);
 my $fr = file qw(po fr.po);
 ok $result = test_dzil('t/dist', [qw(msg-merge), $de, '--backup']),
     'Call msg-merge with de.po arg';
-is $result->exit_code, 0, 'Should have exited 0';
+is $result->exit_code, 0, 'Should have exited 0' or diag @{ $result->log_messages };
 ok got_msg(qr/extracting gettext strings/),
     'Should have logged the POT file creation';
 
@@ -106,7 +106,7 @@ ok $result = test_dzil('t/dist', [
     '--backup',
 ]), 'Init with options';
 
-is $result->exit_code, 0, 'Should have exited 0';
+is $result->exit_code, 0, 'Should have exited 0' or diag @{ $result->log_messages };
 ok !got_msg(qr/extracting gettext strings/),
     'Should not have logged the POT file creation';
 
