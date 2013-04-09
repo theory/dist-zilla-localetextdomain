@@ -11,7 +11,7 @@ use IPC::Run3;
 use File::Path 2.07 qw(make_path);
 use namespace::autoclean;
 
-our $VERSION = '0.86';
+our $VERSION = '0.87';
 
 sub command_names { qw(msg-compile) }
 

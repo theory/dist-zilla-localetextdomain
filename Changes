@@ -1,5 +1,7 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
+0.87
+
 0.86  2013-04-09T00:32:43Z
      - Added diagnostic output to some tests to help figure out why they fail
        on some platforms.
