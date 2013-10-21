@@ -9,7 +9,7 @@ use IPC::Cmd qw(can_run);
 use IPC::Run3;
 use MooseX::Types::Path::Class;
 use Moose::Util::TypeConstraints;
-use Dist::Zilla::File::FromCode;
+use Dist::Zilla::File::FromCode 5.0;
 use File::Path 2.07 qw(make_path remove_tree);
 use namespace::autoclean;
 
@@ -129,8 +129,10 @@ sub gather_files {
         my $log = sub { $self->log(@_) };
         $self->add_file(
             Dist::Zilla::File::FromCode->new({
-                name => $dest->stringify,
-                code => sub {
+                name             => $dest->stringify,
+                encoding         => 'bytes',
+                code_return_type => 'bytes',
+                code             => sub {
                     run3 [@cmd, $temp, $file], undef, $log, $log;
                     $dzil->log_fatal("Cannot compile $file") if $?;
                     scalar $temp->slurp(iomode => '<:raw');
