@@ -9,7 +9,7 @@ use IPC::Cmd qw(can_run);
 use IPC::Run3;
 use MooseX::Types::Path::Class;
 use Moose::Util::TypeConstraints;
-use Dist::Zilla::File::FromCode 5.0;
+use Dist::Zilla::File::FromCode;
 use File::Path 2.07 qw(make_path remove_tree);
 use namespace::autoclean;
 
@@ -120,6 +120,10 @@ sub gather_files {
 
     $self->log("Compiling language files in $lang_dir");
     make_path $tmp_dir->stringify;
+    my @encoding_params = Dist::Zilla::File::FromCode->VERSION >= 5.0 ? (
+        encoding         => 'bytes',
+        code_return_type => 'bytes',
+    ) : ();
 
     for my $lang (@{ $self->language }) {
         my $file = $lang_dir->file("$lang.$lang_ext");
@@ -129,10 +133,9 @@ sub gather_files {
         my $log = sub { $self->log(@_) };
         $self->add_file(
             Dist::Zilla::File::FromCode->new({
-                name             => $dest->stringify,
-                encoding         => 'bytes',
-                code_return_type => 'bytes',
-                code             => sub {
+                @encoding_params,
+                name => $dest->stringify,
+                code => sub {
                     run3 [@cmd, $temp, $file], undef, $log, $log;
                     $dzil->log_fatal("Cannot compile $file") if $?;
                     scalar $temp->slurp(iomode => '<:raw');

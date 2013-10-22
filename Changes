@@ -2,8 +2,7 @@ Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
 0.87
      - Updated file gathering to suport Dist::Zilla 5.0's improved character
-       encoding support. Not compatible with earlier versions of Dist::Zilla,
-       so 5.0 is now required.
+       encoding support.
 
 0.86  2013-04-09T00:32:43Z
      - Added diagnostic output to some tests to help figure out why they fail

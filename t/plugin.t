@@ -30,10 +30,11 @@ is $messages[0], '[LocaleTextDomain] Compiling language files in po',
     'Compiling message should have been emitted';
 
 my $i = 0;
+my $slurp = $tzil->can('slurp_file_raw') || $tzil->can('slurp_file');
 for my $lang (qw(de fr)) {
     like $messages[++$i], qr/(?:po.$lang[.]po: )?19/m,
         "$lang.po message should have been logged";
-    ok my $contents = $tzil->slurp_file_raw(
+    ok my $contents = $tzil->$slurp(
         "build/share/LocaleData/$lang/LC_MESSAGES/DZT-Sample.mo",
     ), "Read in $lang .mo file";
     like $contents, qr/^Language: $lang$/m,
@@ -65,7 +66,7 @@ $i = 0;
 for my $lang (qw(fr)) {
     like $messages[++$i], qr/(?:po.$lang[.]po: )?19/m,
         "$lang.po message should have been logged again";
-    ok my $contents = $tzil->slurp_file_raw(
+    ok my $contents = $tzil->$slurp(
         "build/lib/LocaleData/$lang/LC_MESSAGES/org.imperia.simplecal.bo",
     ), "Read in $lang .bo file";
     like $contents, qr/^Language: $lang$/m,
