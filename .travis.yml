@@ -16,9 +16,9 @@ before_install:
 install:
    - cpanm --quiet --notest --skip-satisfied RJBS/Mixin-Linewise-0.100-TRIAL.tar.gz RJBS/Data-Section-0.200002-TRIAL.tar.gz RJBS/Dist-Zilla-5.003-TRIAL.tar.gz 
    - dzil authordeps | grep -v Dist::Zilla::Plugin::Encoding | grep -vP '[^\w:]' | xargs -n 5 -P 10 cpanm --quiet --notest --skip-satisfied
-   - cpanm --verbose --skip-installed Test::Manifest Test::File
+   - cpanm --quiet --skip-installed Test::Manifest Test::File Encode
    - export AUTOMATED_TESTING=1 HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
-   - dzil listdeps | grep -vP '[^\w:]' | cpanm --quiet
+   - dzil listdeps | grep -vP '[^\w:]' | cpanm --verbose
 
 script:
    - export HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
