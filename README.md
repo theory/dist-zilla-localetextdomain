@@ -1,4 +1,4 @@
-Dist/Zilla/LocaleTextDomain version 0.87
+Dist/Zilla/LocaleTextDomain version 0.88
 ========================================
 
 Dist::Zilla::LocaleTextDomain provides tools to scan your Perl libraries for
