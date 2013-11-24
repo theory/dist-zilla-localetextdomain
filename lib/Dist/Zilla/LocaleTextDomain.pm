@@ -256,7 +256,7 @@ L<C<msg-init>|Dist::Zilla::App::Command::msg_init> command to create it:
   [LocaleTextDomain] Created po/fr.po.
 
 Now edit F<po/fr.po>. You can use a tool such as L<Poedit|http://www.poedit.net>
-or C<Emacs|https://www.gnu.org/software/gettext/manual/html_node/PO-Mode.html>
+or L<Emacs|https://www.gnu.org/software/gettext/manual/html_node/PO-Mode.html>
 to make it easier. As you work, you can use the
 L<C<msg-compile>|Dist::Zilla::App::Command::msg_compile> command to make sure
 that you're translation file is error-free:
