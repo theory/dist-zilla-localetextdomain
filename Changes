@@ -1,6 +1,6 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
-0.87
+0.87  2013-11-24T04:46:40Z
      - Updated file gathering to suport Dist::Zilla 5.0's improved character
        encoding support.
      - Fixed Pod link to actually link.
