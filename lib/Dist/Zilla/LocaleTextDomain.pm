@@ -59,7 +59,7 @@ L<gettext|http://www.gnu.org/software/gettext/> utilities installed.
 
 I put off learning how to use L<Locale::TextDomain> for quite a while because,
 while the L<gettext|http://www.gnu.org/software/gettext/> tools are great for
-translators, the tools for the developer were a little more opaque, especially
+translators, the tools for developers were a little more opaque, especially
 for Perlers used to L<Locale::Maketext>. But I put in the effort while hacking
 L<Sqitch|App::Sqitch>. As I had hoped, using it in my code was easy. Using it
 for my distribution was harder, so I decided to write
@@ -97,7 +97,7 @@ filter to decode the resulting strings into Perl character strings. This makes
 it easier to work with such strings in our application. Just be sure to encode
 them before outputting them!
 
-Okay, so it's loaded, how do you use it? The documentation of the
+Okay, so it's loaded, how do you use it? The documentation for the
 L<Locale::TextDomain exported functions|Locale::TextDomain/EXPORTED FUNCTIONS>
 is quite comprehensive, and I think you'll find it pretty simple once you get
 used to it. For example, simple strings are denoted with C<__>:
@@ -123,7 +123,7 @@ And then you can mix variables with plurals with C<__nx>:
 
   say __nx(
       'One file has been deleted.',
-      '{count} files have been deleted.'",
+      '{count} files have been deleted.',
       $num_files,
       count => $num_files,
   );
@@ -135,10 +135,10 @@ else to come along and start translating for you.
 
 =head2 The setup
 
-Now you're localizing your code. Great! What's next? Officially, nothing. If
-you never do anything else, your code will always emit the messages as
-written. You can ship it and things will work just as if you had never done
-any localization.
+Now you've internationalized your code. Great! What's next? Officially,
+nothing. If you never do anything else, your code will always emit the
+messages as written. You can ship it and things will work just as if you had
+never done any localization.
 
 But what's the fun in that? Let's set things up so that translation catalogs
 will be built and distributed once they're written. Add these lines to your
@@ -154,7 +154,7 @@ you used a domain different from your distribution name, e.g.,
   use Locale::TextDomain 'com.example.My-GreatApp';
 
 Then you would need to set the C<textdomain> attribute so that the
-C<LocaleTextDomain> does the right thing with the language files:
+C<LocaleTextDomain> plugin does the right thing with the language files:
 
   [LocaleTextDomain]
   textdomain = com.example.My-GreatApp
@@ -163,11 +163,11 @@ Consult the
 L<C<LocaleTextDomain> configuration docs|Dist::Zilla::Plugin::LocaleTextDomain/Configuration>
 for details on all available attributes.
 
-B<(Special note until L<this Locale::TextDomain
-patch|https://rt.cpan.org/Public/Bug/Display.html?id=79461> is merged: set the
-C<share_dir> attribute to C<lib> instead of the default value, C<share>. If
-you use L<Module::Build>, you will also need a subclass to do the right thing
-with the catalog files; see
+B<(Prior to Locale::TextDomain v1.21, there was no C<ShareDir> support. If
+you're unfortunate to be stuck with one of these earlier versions, you'll need
+to set the C<share_dir> attribute to C<lib> instead of the default value,
+C<share>. If you use L<Module::Build>, you'll also need a subclass to do the
+right thing with the catalog files; see
 L<Dist::Zilla::Plugin::LocaleTextDomain/Installation> for details.)>
 
 What does including the plugin do? Mostly nothing. You might see this line
@@ -220,9 +220,9 @@ into binary catalogs. You'll see this line output from C<dzil build>:
 You'll then find the catalogs in the shared directory of your distribution:
 
   > find My-GreatApp-0.01/share -type f
-  My-GreatApp-0.01/share/LocaleData/de/LC_MESSAGES/App-Sqitch.mo
-  My-GreatApp-0.01/share/LocaleData/en_US/LC_MESSAGES/App-Sqitch.mo
-  My-GreatApp-0.01/share/LocaleData/ja/LC_MESSAGES/App-Sqitch.mo
+  My-GreatApp-0.01/share/LocaleData/de/LC_MESSAGES/My-GreatApp.mo
+  My-GreatApp-0.01/share/LocaleData/en_US/LC_MESSAGES/My-GreatApp.mo
+  My-GreatApp-0.01/share/LocaleData/ja/LC_MESSAGES/My-GreatApp.mo
 
 These binary catalogs will be installed as part of the distribution just where
 C<Locale::TextDomain> can find them.
@@ -315,7 +315,7 @@ L<C<msg-scan>|Dist::Zilla::App::Command::msg_scan> command will scan the Perl
 module files gathered by Dist::Zilla and make it for you:
 
   > dzil msg-scan
-  gettext strings into po/My-GreatApp.pot
+  extracting gettext strings into po/My-GreatApp.pot
 
 The resulting F<.pot> file will then be used by C<msg-init> and C<msg-merge>
 rather than scanning your code all over again. This actually then makes C<msg-merge>

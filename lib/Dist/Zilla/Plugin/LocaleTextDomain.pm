@@ -176,17 +176,13 @@ installed in the right place.
 
 =head2 Installation
 
-Ideally, L<Locale::TextDomain> would search for language files in the shared
-directory for your distribution, as defined by L<File::ShareDir>. A
-L<patch|https://rt.cpan.org/Ticket/Display.html?id=79461> has been submitted
-to add this support, after which the example code from the L</Synopsis> should
-just work.
-
-Until that time, however, L<Locale::TextDomain> searches for files in Perl's
-C<@INC> directories, in which case the use of the
-L<ShareDir plugin|Dist::Zilla::Plugin::ShareDir> will not work. You will have
-to install the compiled language files into the F<lib> directory in your
-distribution. To do so, simply set the C<share_dir> attribute to "lib":
+By default, L<Locale::TextDomain> searches for language files in the shared
+directory for your distribution, as defined by L<File::ShareDir>. Prior to
+v1.21, however, this was not the case. Instead, it searched for files in
+Perl's C<@INC> directories. If you're stuck with one of these older versions
+of Locale::TextDomain, you'll have to install the compiled language files into
+the F<lib> directory in your distribution. To do so, simply set the
+C<share_dir> attribute to "lib":
 
   [LocaleTextDomain]
   textdomain = My-App
