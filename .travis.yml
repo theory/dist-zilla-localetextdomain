@@ -19,7 +19,7 @@ install:
    - cpanm --quiet --skip-installed Test::Manifest Test::File Encode
    - export AUTOMATED_TESTING=1 HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
    - cpanm --quiet --skip-satisfied Locale::Country
-   - dzil listdeps | grep -vP '[^\w:]' | grep -v Locale:: | cpanm --quiet
+   - dzil listdeps | grep -vP '[^\w:]' | grep -v 'Locale::' | cpanm --quiet
 
 script:
    - export HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
