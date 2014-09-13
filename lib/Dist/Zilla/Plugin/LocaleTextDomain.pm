@@ -15,6 +15,10 @@ use namespace::autoclean;
 
 with 'Dist::Zilla::Role::FileGatherer';
 
+with 'Dist::Zilla::Role::FileFinderUser' => {
+    default_finders  => [ ':InstallModules', ':ExecFiles' ],
+};
+
 our $VERSION = '0.88';
 
 use IPC::Cmd qw(can_run);
