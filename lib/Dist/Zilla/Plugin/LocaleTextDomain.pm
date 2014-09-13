@@ -269,6 +269,25 @@ maintain in your repository. Defaults to C<po>.
 
 Suffix to use for the compiled language file. Defaults to C<mo>.
 
+=head3 C<finder>
+
+File finders that should be used to look for files where strings have to be
+extracted. May be specified more than once. If not specified, the default will
+be C<:InstallModules> and C<:ExecFiles>, i.e. files below C<lib/> and executable
+files marked by e.g. the L<ExecDir|Dist::Zilla::Plugin::ExecDir> plugin. It is
+also possible to combine default finders with custom ones based on a
+L<FileFinder|Dist::Zilla::Role::FileFinder> plugin:
+
+    [FileFinder::ByName / MyFiles]
+    file = *.pl
+
+    [LocaleTextDomain]
+    finder = MyFiles
+    finder = :ShareFiles
+
+The above configuration will extract strings from files that match C<*.pl> and
+all files in a share directory.
+
 =head1 Author
 
 David E. Wheeler <david@justatheory.com>
