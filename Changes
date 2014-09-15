@@ -9,7 +9,7 @@ Revision history for Perl extension Dist-Zilla-LocaleTextDomain
        now will be extracted from files below `lib/` and the files in the
        directory configured for the `ExecDir` plug-in (if loaded). Edit the
        `finder` attribute in the `LocaleTextDomain` section of `dist.ini` to
-       change this behiavior. Thanks to Manfred Stock for the patch!
+       change this behavior. Thanks to Manfred Stock for the patch!
 
 0.87  2013-11-24T04:46:40Z
      - Updated file gathering to suport Dist::Zilla 5.0's improved character
