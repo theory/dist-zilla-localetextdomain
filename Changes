@@ -4,6 +4,13 @@ Revision history for Perl extension Dist-Zilla-LocaleTextDomain
      - Updated docs to reflect proper ShareDir support in Locale::TextDomain
        v1.21 and higher.
      - Various documentation corrections.
+     - Added `finder` attribute to customize the files that are searched for
+       localization strings. Previously, only `*.pm` files were searched, but
+       now will be extracted from files below `lib/` and the files in the
+       directory configured for the `ExecDir` plug-in (if loaded). Edit the
+       `finder` attribute in the `LocaleTextDomain` section of `dist.ini` to
+       change this behiavior. Thanks to "perlancar" for the patch!
+
 
 0.87  2013-11-24T04:46:40Z
      - Updated file gathering to suport Dist::Zilla 5.0's improved character

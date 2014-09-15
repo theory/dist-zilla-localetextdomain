@@ -271,22 +271,22 @@ Suffix to use for the compiled language file. Defaults to C<mo>.
 
 =head3 C<finder>
 
-File finders that should be used to look for files where strings have to be
-extracted. May be specified more than once. If not specified, the default will
-be C<:InstallModules> and C<:ExecFiles>, i.e. files below C<lib/> and executable
-files marked by e.g. the L<ExecDir|Dist::Zilla::Plugin::ExecDir> plugin. It is
-also possible to combine default finders with custom ones based on a
-L<FileFinder|Dist::Zilla::Role::FileFinder> plugin:
+File finders to use to look for files to search for strings to extract. May be
+specified more than once. If not specified, the default will be
+C<:InstallModules> and C<:ExecFiles>; that is, files below F<lib/> and
+executable files marked by e.g. the L<C<ExecDir>|Dist::Zilla::Plugin::ExecDir>
+plugin. You can also combine default finders with custom ones based on a
+L<C<FileFinder>|Dist::Zilla::Role::FileFinder> plugin. For example:
 
-    [FileFinder::ByName / MyFiles]
-    file = *.pl
+  [FileFinder::ByName / MyFiles]
+  file = *.pl
 
-    [LocaleTextDomain]
-    finder = MyFiles
-    finder = :ShareFiles
+  [LocaleTextDomain]
+  finder = MyFiles
+  finder = :ShareFiles
 
-The above configuration will extract strings from files that match C<*.pl> and
-all files in a share directory.
+This configuration will extract strings from files that match C<*.pl> and all
+files in a share directory.
 
 =head1 Author
 
