@@ -47,6 +47,9 @@ file_contents_like $pot,
 file_contents_like $pot,
     qr/^\Qmsgid "Bye"\E$/m,
     'po/DZT-Sample.pot should exist should have "Bye" msgid';
+file_contents_like $pot,
+    qr/^\Qmsgid "Foo"\E$/m,
+    'po/DZT-Sample.pot should exist should have "Foo" msgid';
 
 # Try setting some stuff.
 $result = test_dzil('t/dist', [qw(
@@ -76,5 +79,28 @@ file_contents_like $pot,
 file_contents_like $pot,
     qr/^\Qmsgid "Bye"\E$/m,
     'my.pot should exist should have "Bye" msgid';
+
+# Use finder attribute
+$result = test_dzil('t/dist2', [qw(msg-scan)]);
+is $result->exit_code, 0, "dzil would have exited 0" or diag @{ $result->log_messages };
+
+ok((grep {
+    /extracting gettext strings into po.DZT-Sample2[.]pot/
+} @{ $result->log_messages }),  'Should have logged the POT file creation');
+
+$pot = file $result->tempdir, qw(source po DZT-Sample2.pot);
+file_exists_ok $pot, 'po/DZT-Sample2.pot should exist';
+file_contents_like $pot,
+    qr/bar[.]pl:6$/m,
+    'po/DZT-Sample2.pot should have entry for "bar.pl" file';
+file_contents_like $pot,
+    qr/^\Qmsgid "Bar"\E$/m,
+    'po/DZT-Sample2.pot should exist should have "Bar" msgid';
+file_contents_like $pot,
+    qr/Config[.]pm:6$/m,
+    'po/DZT-Sample2.pot should have entry for "Config.pm" file';
+file_contents_like $pot,
+    qr/^\Qmsgid "Foo"\E$/m,
+    'po/DZT-Sample2.pot should exist should have "Foo" msgid';
 
 done_testing;

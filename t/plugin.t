@@ -15,6 +15,7 @@ sub tzil {
             add_files => {
                 'source/dist.ini' => simple_ini(
                     'GatherDir',
+                    'ExecDir',
                     ['LocaleTextDomain', @_],
                 ),
             },
@@ -41,6 +42,12 @@ for my $lang (qw(de fr)) {
         "Compiled $lang .mo should have language content";
 }
 
+my $files = $tzil->plugin_named('LocaleTextDomain')->found_files();
+is scalar grep({ $_->name() =~ m{sample$} } @{ $files }), 1,
+    'bin/sample file is found';
+is scalar grep({ $_->name() =~ m{Sample[.]pm$} } @{ $files }), 1,
+    'lib/Sample.pm file is found';
+
 # Specify the attributes.
 ok $tzil = tzil({
     textdomain       => 'org.imperia.simplecal',
@@ -49,7 +56,8 @@ ok $tzil = tzil({
     msgfmt           => 'msgfmt',
     lang_file_suffix => 'po',
     bin_file_suffix  => 'bo',
-    language         => ['fr']
+    language         => ['fr'],
+    finder           => [':InstallModules'],
 }), 'Create another tzil';
 
 ok $tzil->build, 'Build again';
@@ -72,5 +80,11 @@ for my $lang (qw(fr)) {
     like $contents, qr/^Language: $lang$/m,
         "Complied $lang .bo file should have language content";
 }
+
+$files = $tzil->plugin_named('LocaleTextDomain')->found_files();
+is scalar grep({ $_->name() =~ m{sample$} } @{ $files }), 0,
+    'bin/sample file is not found since :ExecFiles finder is not in use';
+is scalar grep({ $_->name() =~ m{Sample[.]pm$} } @{ $files }), 1,
+    'lib/Sample.pm file is found';
 
 done_testing;
