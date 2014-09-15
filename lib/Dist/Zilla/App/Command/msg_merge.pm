@@ -14,7 +14,7 @@ use File::Copy;
 use File::Find::Rule;
 use namespace::autoclean;
 
-our $VERSION = '0.88';
+our $VERSION = '0.90';
 
 with 'Dist::Zilla::Role::PotFile';
 

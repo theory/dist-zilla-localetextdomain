@@ -11,7 +11,7 @@ use namespace::autoclean;
 with 'Dist::Zilla::Role::PotWriter';
 requires 'zilla';
 
-our $VERSION = '0.88';
+our $VERSION = '0.90';
 
 sub pot_file {
     my ( $self, %p ) = @_;
