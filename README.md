@@ -28,7 +28,7 @@ Or, if you don't have Module::Build installed, type the following:
 Dependencies
 ------------
 
-This module requires the the [gettext](http://www.gnu.org/software/gettext/)
+This module requires the [gettext](http://www.gnu.org/software/gettext/)
 utilities. It also requires the following non-core modules:
 
 * Dist::Zilla
