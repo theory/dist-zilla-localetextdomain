@@ -5,7 +5,7 @@ package Dist::Zilla::Role::PotFile;
 use Moose::Role;
 use strict;
 use warnings;
-use Path::Class;
+use Path::Tiny;
 use namespace::autoclean;
 
 with 'Dist::Zilla::Role::PotWriter';
@@ -26,13 +26,13 @@ sub pot_file {
     my $plugin = $self->zilla->plugin_named('LocaleTextDomain')
         or $dzil->log_fatal('LocaleTextDomain plugin not found in dist.ini!');
 
-    $pot = file $plugin->lang_dir, $dzil->name . '.pot';
+    $pot = $plugin->lang_dir->child($dzil->name . '.pot');
     return $pot if -e $pot;
 
     # Create a temporary template file.
     require File::Temp;
     my $tmp = $self->{tmp} = File::Temp->new(SUFFIX => '.pot', OPEN => 0);
-    $pot = file $tmp->filename;
+    $pot = path $tmp->filename;
     $self->log('extracting gettext strings');
     $self->write_pot(
         to               => $pot,

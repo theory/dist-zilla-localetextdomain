@@ -5,7 +5,7 @@ use warnings;
 use Test::More 0.90;
 use Test::DZil;
 use IPC::Cmd 'can_run';
-use Path::Class;
+use Path::Tiny;
 use Test::File;
 use Test::File::Contents;
 use Dist::Zilla::App::Tester;
@@ -32,7 +32,7 @@ ok((grep {
     /extracting gettext strings into po.DZT-Sample[.]pot/
 } @{ $result->log_messages }),  'Should have logged the POT file creation');
 
-my $pot = file $result->tempdir, qw(source po DZT-Sample.pot);
+my $pot = path $result->tempdir, qw(source po DZT-Sample.pot);
 file_exists_ok $pot, 'po/DZT-Sample.pot should exist';
 file_contents_like $pot, qr/\QCopyright (C) YEAR David E. Wheeler/m,
     'po/DZT-Sample.pot should have copyright holder';
@@ -64,7 +64,7 @@ ok((grep {
     /extracting gettext strings into my[.]pot/
 } @{ $result->log_messages }),  'Should have logged the mo.pot creation');
 
-$pot = file $result->tempdir, qw(source my.pot);
+$pot = path $result->tempdir, qw(source my.pot);
 file_exists_ok $pot, 'my.pot should exist';
 file_contents_like $pot, qr/\QCopyright (C) YEAR Homer Simpson/m,
     'my.pot should have copyright holder';
@@ -88,7 +88,7 @@ ok((grep {
     /extracting gettext strings into po.DZT-Sample2[.]pot/
 } @{ $result->log_messages }),  'Should have logged the POT file creation');
 
-$pot = file $result->tempdir, qw(source po DZT-Sample2.pot);
+$pot = path $result->tempdir, qw(source po DZT-Sample2.pot);
 file_exists_ok $pot, 'po/DZT-Sample2.pot should exist';
 file_contents_like $pot,
     qr/bar[.]pl:6$/m,

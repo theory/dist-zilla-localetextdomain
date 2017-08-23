@@ -4,10 +4,10 @@ package Dist::Zilla::Plugin::LocaleTextDomain;
 use strict;
 use warnings;
 use Moose;
-use Path::Class;
+use Path::Tiny;
 use IPC::Cmd qw(can_run);
 use IPC::Run3;
-use MooseX::Types::Path::Class;
+use MooseX::Types::Path::Tiny qw(Path);
 use Moose::Util::TypeConstraints;
 use Dist::Zilla::File::FromCode;
 use File::Path 2.07 qw(make_path remove_tree);
@@ -37,25 +37,22 @@ has textdomain => (
 
 has lang_dir => (
     is      => 'ro',
-    isa     => 'Path::Class::Dir',
+    isa     => Path,
     coerce  => 1,
-    default => sub { dir 'po' },
+    default => sub { path 'po' },
 );
 
 has share_dir => (
     is      => 'ro',
-    isa     => 'Path::Class::Dir',
+    isa     => Path,
     coerce  => 1,
-    default => sub { dir 'share' },
+    default => sub { path 'share' },
 );
 
 has _tmp_dir => (
     is      => 'ro',
-    isa     => 'Path::Class::Dir',
-    default => sub {
-        require File::Temp;
-        dir File::Temp::tempdir(CLEANUP => 1);
-    },
+    isa     => Path,
+    default => sub { Path::Tiny->tempdir },
 );
 
 has msgfmt => (
@@ -123,17 +120,17 @@ sub gather_files {
     }
 
     $self->log("Compiling language files in $lang_dir");
-    make_path $tmp_dir->stringify;
+    $tmp_dir->mkpath;
     my @encoding_params = Dist::Zilla::File::FromCode->VERSION >= 5.0 ? (
         encoding         => 'bytes',
         code_return_type => 'bytes',
     ) : ();
 
     for my $lang (@{ $self->language }) {
-        my $file = $lang_dir->file("$lang.$lang_ext");
-        my $dest = file $shr_dir, 'LocaleData', $lang, 'LC_MESSAGES',
-            "$txt_dom.$bin_ext";
-        my $temp = $tmp_dir->file("$lang.$bin_ext");
+        my $file = $lang_dir->child("$lang.$lang_ext");
+        my $dest = $shr_dir->child('LocaleData', $lang, 'LC_MESSAGES',
+            "$txt_dom.$bin_ext");
+        my $temp = $tmp_dir->child("$lang.$bin_ext");
         my $log = sub { $self->log(@_) };
         $self->add_file(
             Dist::Zilla::File::FromCode->new({
@@ -142,7 +139,7 @@ sub gather_files {
                 code => sub {
                     run3 [@cmd, $temp, $file], undef, $log, $log;
                     $dzil->log_fatal("Cannot compile $file") if $?;
-                    scalar $temp->slurp(iomode => '<:raw');
+                    scalar $temp->slurp_raw;
                 },
             })
         );

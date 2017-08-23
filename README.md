@@ -44,8 +44,8 @@ utilities. It also requires the following non-core modules:
 * Moose
 * Moose::Role:
 * Moose::Util::TypeConstraints
-* MooseX::Types::Path::Class
-* Path::Class
+* MooseX::Types::Path::Tiny
+* Path::Tiny
 * namespace::autoclean
 
 Copyright and License

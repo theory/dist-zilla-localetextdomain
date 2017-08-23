@@ -6,6 +6,7 @@ use Dist::Zilla::App -command;
 use strict;
 use warnings;
 use Moose;
+use Path::Tiny;
 use namespace::autoclean;
 
 our $VERSION = '0.91';
@@ -49,11 +50,10 @@ sub validate_args {
 sub execute {
     my ( $self, $opt ) = @_;
 
-    require Path::Class;
     my $dzil     = $self->zilla;
     my $plugin   = $self->zilla->plugin_named('LocaleTextDomain')
         or $dzil->log_fatal('LocaleTextDomain plugin not found in dist.ini!');
-    my $pot_file = Path::Class::file($opt->{pot_file} || (
+    my $pot_file = path($opt->{pot_file} || (
         $plugin->lang_dir, $self->zilla->name . '.pot'
     ));
 
