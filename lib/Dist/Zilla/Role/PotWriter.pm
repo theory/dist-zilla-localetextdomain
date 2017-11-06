@@ -5,7 +5,6 @@ package Dist::Zilla::Role::PotWriter;
 use Moose::Role;
 use strict;
 use warnings;
-use File::Path qw(make_path);
 use IPC::Run3;
 use namespace::autoclean;
 
@@ -32,7 +31,7 @@ sub write_pot {
     my $verb = -e $pot ? 'update' : 'create';
 
     # Make sure the directory exists.
-    make_path $pot->parent->stringify unless -d $pot->parent;
+    $pot->parent->mkpath unless -d $pot->parent;
 
     # Need to do this before calling other methods, as they need the
     # files loaded to find various information.
@@ -117,7 +116,7 @@ language translation file. The supported parameters are:
 
 =item C<to>
 
-L<Path::Class::File> object representing the file to write to. Required.
+L<Path::Tiny> object representing the file to write to. Required.
 
 =item C<scan_files>
 

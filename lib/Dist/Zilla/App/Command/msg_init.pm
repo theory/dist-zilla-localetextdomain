@@ -5,7 +5,6 @@ package Dist::Zilla::App::Command::msg_init;
 use Dist::Zilla::App -command;
 use strict;
 use warnings;
-use Path::Class;
 use Dist::Zilla::Plugin::LocaleTextDomain;
 use Moose;
 use IPC::Run3;
@@ -99,7 +98,7 @@ sub execute {
     for my $lang (@{ $args }) {
         # Strip off encoding.
         (my $name = $lang) =~ s/[.].+$//;
-        my $dest = $lang_dir->file( $name . $lang_ext );
+        my $dest = $lang_dir->child( $name . $lang_ext );
         $plugin->log_fatal("$dest already exists") if -e $dest;
         run3 (
             [@cmd,  "--locale=$lang", '--output-file=' . $dest],

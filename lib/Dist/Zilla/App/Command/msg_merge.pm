@@ -5,7 +5,6 @@ package Dist::Zilla::App::Command::msg_merge;
 use Dist::Zilla::App -command;
 use strict;
 use warnings;
-use Path::Class;
 use Dist::Zilla::Plugin::LocaleTextDomain;
 use File::Basename;
 use Moose;
