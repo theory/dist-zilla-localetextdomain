@@ -111,7 +111,7 @@ ok((grep {
     /extracting gettext strings into po.DZT-Sample3[.]pot/
 } @{ $result->log_messages }),  'Should have logged the POT file creation');
 
-$pot = file $result->tempdir, qw(source po DZT-Sample3.pot);
+$pot = path $result->tempdir, qw(source po DZT-Sample3.pot);
 file_exists_ok $pot, 'po/DZT-Sample3.pot should exist';
 file_contents_like $pot,
     qr/myprog[.]pl:6$/m,
@@ -134,7 +134,7 @@ ok((grep {
     /extracting gettext strings into po.DZT-Sample4[.]pot/
 } @{ $result->log_messages }),  'Should have logged the POT file creation');
 
-$pot = file $result->tempdir, qw(source po DZT-Sample4.pot);
+$pot = path $result->tempdir, qw(source po DZT-Sample4.pot);
 file_exists_ok $pot, 'po/DZT-Sample4.pot should exist';
 file_contents_unlike $pot,
     qr/myprog[.]pl:6$/m,
@@ -157,7 +157,7 @@ ok((grep {
     /extracting gettext strings into po.DZT-Sample5[.]pot/
 } @{ $result->log_messages }),  'Should have logged the POT file creation');
 
-$pot = file $result->tempdir, qw(source po DZT-Sample5.pot);
+$pot = path $result->tempdir, qw(source po DZT-Sample5.pot);
 file_exists_ok $pot, 'po/DZT-Sample5.pot should exist';
 file_contents_like $pot,
     qr/myprog[.]pl:6$/m,
