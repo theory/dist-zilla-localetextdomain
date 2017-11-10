@@ -19,7 +19,7 @@ with 'Dist::Zilla::Role::FileFinderUser' => {
     default_finders  => [ ':InstallModules', ':ExecFiles' ],
 };
 
-our $VERSION = '0.91';
+our $VERSION = '0.92';
 
 use IPC::Cmd qw(can_run);
 BEGIN {

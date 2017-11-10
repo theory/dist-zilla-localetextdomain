@@ -11,7 +11,7 @@ use IPC::Run3;
 use File::Find::Rule;
 use namespace::autoclean;
 
-our $VERSION = '0.91';
+our $VERSION = '0.92';
 
 with 'Dist::Zilla::Role::PotFile';
 

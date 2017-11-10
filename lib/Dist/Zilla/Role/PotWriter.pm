@@ -8,7 +8,7 @@ use warnings;
 use IPC::Run3;
 use namespace::autoclean;
 
-our $VERSION = '0.91';
+our $VERSION = '0.92';
 
 sub files_to_scan {
     my $self   = shift;

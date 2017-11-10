@@ -9,7 +9,7 @@ use Moose;
 use Path::Tiny;
 use namespace::autoclean;
 
-our $VERSION = '0.91';
+our $VERSION = '0.92';
 
 with 'Dist::Zilla::Role::PotWriter';
 

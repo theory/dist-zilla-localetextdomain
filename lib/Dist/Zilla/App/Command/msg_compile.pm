@@ -10,7 +10,7 @@ use Dist::Zilla::Plugin::LocaleTextDomain;
 use IPC::Run3;
 use namespace::autoclean;
 
-our $VERSION = '0.91';
+our $VERSION = '0.92';
 
 sub command_names { qw(msg-compile) }
 
