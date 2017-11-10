@@ -1,6 +1,6 @@
 Revision history for Perl extension Dist-Zilla-LocaleTextDomain
 
-0.91
+0.91  2017-11-10T02:01:44Z
      - Switched to Path::Tiny. IMPORTANT: This is potentially a backwards
        compatibility break for third-party plugin code that relies on certain
        plugin attributes following the Class::Path API.
