@@ -6,6 +6,7 @@ use Moose::Role;
 use strict;
 use warnings;
 use IPC::Run3;
+use Email::Address::XS 1.01;
 use namespace::autoclean;
 
 our $VERSION = '0.92';
@@ -41,9 +42,8 @@ sub write_pot {
 
     my $email = $p{bugs_email} || do {
         if (my $author = $dzil->authors->[0]) {
-            require Email::Address;
-            my ($addr) = Email::Address->parse($author);
-            $addr->address if $addr;
+            my $addr = Email::Address::XS->parse($author);
+            $addr->address if $addr->is_valid;
         }
     } || '';
 
@@ -185,7 +185,7 @@ configured for L<Dist::Zilla>.
 
 Email address for reporting translation bugs. Defaults to the email address of
 the first author known to L<Dist::Zilla>, if available and parseable by
-L<Email::Address>.
+L<Email::Address::XS>.
 
 =back
 

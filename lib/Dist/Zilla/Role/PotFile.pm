@@ -129,7 +129,7 @@ configured for L<Dist::Zilla>.
 
 Email address for reporting translation bugs. Defaults to the email address of
 the first author known to L<Dist::Zilla>, if available and parseable by
-L<Email::Address>.
+L<Email::Address::XS>.
 
 =back
 

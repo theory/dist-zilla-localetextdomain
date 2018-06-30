@@ -34,7 +34,7 @@ utilities. It also requires the following non-core modules:
 * Dist::Zilla
 * Dist::Zilla::File::FromCode
 * Dist::Zilla::Role::FileGatherer
-* Email::Address
+* Email::Address::XS
 * Encode
 * File::Find::Rule
 * IPC::Cmd
